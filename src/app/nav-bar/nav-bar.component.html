@@ -1,0 +1,19 @@
+<div class="card">
+    <p-menubar [model]="items">
+        <ng-template #start>
+            <h2>LOAPlanner</h2>
+        </ng-template>
+        <ng-template #item let-item let-root="root">
+            <a pRipple class="flex items-center p-menubar-item-link">
+                <span [class]="item.icon"></span>
+                <span>{{ item.label }}</span>
+            </a>
+        </ng-template>
+        <ng-template #end>
+            <div class="flex items-center">
+                <span class="pi pi-user mr-2"></span>
+                <span>{{ username }}</span>
+            </div>
+        </ng-template>
+    </p-menubar>
+</div>
