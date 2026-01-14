@@ -15,5 +15,10 @@ export const routes: Routes = [
         path: 'raids',
         loadComponent: () =>
             import('./pages/raids/raids.component').then(m => m.RaidsComponent)
+    },
+    {
+        path: 'activities',
+        loadComponent: () =>
+            import('./pages/activities/activities.component').then(m => m.ActivitiesComponent)
     }
 ];
