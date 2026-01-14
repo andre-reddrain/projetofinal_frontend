@@ -1,7 +1,9 @@
 <div class="card">
     <p-menubar [model]="items">
         <ng-template #start>
-            <h2>LOAPlanner</h2>
+            <a routerLink="/" class="cursor-pointer no-underline">
+                <h2>LOAPlanner</h2>
+            </a>
         </ng-template>
         <ng-template #item let-item let-root="root">
             <a pRipple class="flex items-center p-menubar-item-link">
