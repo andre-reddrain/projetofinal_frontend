@@ -1,6 +1,7 @@
 import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
+import { RaidsService } from '../../services/raids.service';
 
 interface Raid {
   name: string,
@@ -15,17 +16,13 @@ interface Raid {
   styleUrl: './raids.component.scss'
 })
 export class RaidsComponent {
-  raids: Raid[] | undefined;
+  raidsData: any
+
+  constructor(private raidService: RaidsService) {}
 
   ngOnInit() {
-    this.raids = [
-      { name: 'Argos', type: 'Abyss Raid' },
-      { name: 'Thaemine', type: 'Legion Raid' },
-      { name: 'Valtan', type: 'Kazeros Raid' },
-      { name: 'Vykas', type: 'Abyss Raid' },
-      { name: 'Brelshaza', type: 'Abyss Raid' },
-      { name: 'Aegir', type: 'Abyss Raid' },
-      // More sidebar items here...
-    ]
+    this.raidService.raidList().subscribe((data: any) => {
+      this.raidsData = data;
+    })
   }
 }
