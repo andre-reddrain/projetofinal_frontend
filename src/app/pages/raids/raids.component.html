@@ -1,1 +1,8 @@
-<p>raids works!</p>
+<div class="flex flex-wrap gap-3">
+    <div *ngFor="let raid of this.raids" class="flex-grow-0" style="width: 32%;">
+        <p-button variant="text" class="w-full flex justify-between items-center p-2 border-solid border-round">
+            <span class="text-left text-4xl raid-name">{{ raid.name }}</span>
+            <img src="temp.png" alt="icon" class="flex-none raid-img">
+        </p-button>
+    </div>
+</div>
