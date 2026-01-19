@@ -1,3 +1,14 @@
+.raid {
+  border: 3px solid transparent;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.raid:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+
 .raid-name {
   font-size: 2rem;
   word-wrap: break-word;
@@ -8,4 +19,8 @@
   height: 120px;
   object-fit: fill;
   color: transparent;
+}
+
+.white-space-nowrap {
+  white-space: nowrap;
 }
