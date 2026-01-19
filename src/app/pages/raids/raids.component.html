@@ -1,8 +1,18 @@
+<h1>Raids</h1>
 <div class="flex flex-wrap gap-3">
-    <div *ngFor="let raid of this.raids" class="flex-grow-0" style="width: 32%;">
-        <p-button variant="text" class="w-full flex justify-between items-center p-2 border-solid border-round">
-            <span class="text-left text-4xl raid-name">{{ raid.name }}</span>
-            <img src="temp.png" alt="icon" class="flex-none raid-img">
-        </p-button>
+  <div *ngFor="let raid of raids" class="flex-none">
+    
+    <div class="flex justify-content-between align-items-stretch surface-card border-round" style="min-height:120px; width: 400px;">
+      
+      <!-- Left side: text stack -->
+      <div class="flex flex-column justify-content-between p-3" style="width:50%;">
+        <div class="text-left text-4xl font-bold raid-name">{{ raid.name }}</div>
+        <div class="text-left text-sm text-gray-500">{{ raid.type }}</div>
+      </div>
+      
+      <!-- Right image -->
+      <img src="temp.webp" alt="icon" class="flex-none pr-2 raid-img">
+      
     </div>
+  </div>
 </div>

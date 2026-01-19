@@ -3,7 +3,8 @@ import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 
 interface Raid {
-  name: string
+  name: string,
+  type: string
 }
 
 @Component({
@@ -18,12 +19,12 @@ export class RaidsComponent {
 
   ngOnInit() {
     this.raids = [
-      { name: 'Argos' },
-      { name: 'Thaemine' },
-      { name: 'Valtan' },
-      { name: 'Vykas' },
-      { name: 'Brelshaza' },
-      { name: 'Aegir' },
+      { name: 'Argos', type: 'Abyss Raid' },
+      { name: 'Thaemine', type: 'Legion Raid' },
+      { name: 'Valtan', type: 'Kazeros Raid' },
+      { name: 'Vykas', type: 'Abyss Raid' },
+      { name: 'Brelshaza', type: 'Abyss Raid' },
+      { name: 'Aegir', type: 'Abyss Raid' },
       // More sidebar items here...
     ]
   }
