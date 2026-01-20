@@ -1,7 +1,7 @@
 import { NgFor } from '@angular/common';
 import { Component } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
-import { RaidsService } from '../../services/raids.service';
+import { RaidsService } from '../../services/raids/raids.service';
 import { RaidDialogComponent } from "./raid-dialog/raid-dialog.component";
 
 interface Raid {
@@ -31,7 +31,7 @@ export class RaidsComponent {
   constructor(private raidService: RaidsService) {}
 
   ngOnInit() {
-    this.raidService.raidList().subscribe((data: any) => {
+    this.raidService.raidListWithGates().subscribe((data: any) => {
       this.raidsData = data;
     })
   }

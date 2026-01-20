@@ -5,11 +5,12 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class RaidsService {
+  private baseUrl: string = "http://localhost:8080";
 
   constructor(private http: HttpClient) { }
 
-  raidList() {
-    const url = "http://localhost:8080/api/raids";
+  raidListWithGates() {
+    const url = this.baseUrl + "/api/raids";
 
     return this.http.get(url);
   }
