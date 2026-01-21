@@ -4,11 +4,6 @@ import { ButtonModule } from 'primeng/button';
 import { RaidsService } from '../../services/raids/raids.service';
 import { RaidDialogComponent } from "./raid-dialog/raid-dialog.component";
 
-interface Raid {
-  name: string,
-  type: string
-}
-
 @Component({
   selector: 'app-raids',
   standalone: true,
@@ -31,7 +26,7 @@ export class RaidsComponent {
   constructor(private raidService: RaidsService) {}
 
   ngOnInit() {
-    this.raidService.raidListWithGates().subscribe((data: any) => {
+    this.raidService.getAllRaidsWithGates().subscribe((data: any) => {
       this.raidsData = data;
     })
   }

@@ -24,8 +24,6 @@ export class RaidDialogComponent {
   constructor(private gateDetailsService: GateDetailsService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log("this.raid");
-    console.log(this.raid);
     if (changes["visible"] && this.visible) {
       let gateIds = this.raid.gates.map((gate: { id: any; }) =>  gate.id);
       
@@ -36,8 +34,6 @@ export class RaidDialogComponent {
   }
 
   separateGatesByDifficulty(data: any[]) {
-    const raidGates = this.raid.gates;
-
     // Will be showned in the DOM
     const difficultiesMap: { [key: string]: any[] } = {};
 
@@ -52,17 +48,11 @@ export class RaidDialogComponent {
       difficultiesMap[difficulty].push(gate);
     });
 
-    // Map each gate to include the gate name
+    // Converts to array from the template
     this.difficulties = Object.entries(difficultiesMap).map(([difficulty, gates]) => ({
       difficulty,
-      gates: gates.map((gate, index) => ({
-        ...gate,
-        name: raidGates[index]?.name
-      }))
+      gates
     }));
-
-    console.log("this.difficulties");
-    console.log(this.difficulties);
   }
 
   /**

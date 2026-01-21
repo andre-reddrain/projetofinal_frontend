@@ -1,0 +1,30 @@
+<div class="grid" style="height: 100%;">
+    <div class="col-4 overflow-y-auto h-full p-2">
+        <h1>Gate Details</h1>
+        <div *ngFor="let gateDetail of gateDetailsData" class="mt-2">
+            <p-button
+                [label]="'[' + gateDetail.difficulty + ']' + ' ' + gateDetail.gateName"
+                [severity]="getSeverity(gateDetail)"></p-button>
+        </div>
+    </div>
+
+    <div class="col-3 p-2">
+        <h1>Reward Form</h1>
+        <form #rewardForm="ngForm">
+            <label>Type Rewards</label>
+            <p-select [options]="typeRewards" optionLabel="name"></p-select>
+
+            <label>Quantity</label>
+            <p-input-number [required]="true"></p-input-number>
+
+            <label>Is Extra Reward?</label>
+            <p-checkbox></p-checkbox>
+
+            <p-button label="Submit" [disabled]="rewardForm.form.invalid"></p-button>
+        </form>
+    </div>
+
+    <div class="col-4 p-2">
+        <h3>Rewards</h3>
+    </div>
+</div>

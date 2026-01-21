@@ -20,4 +20,10 @@ export class GateDetailsService {
 
     return this.http.get<[]>(url, { params })
   }
+
+  getAllGateDetails() {
+    const url = this.baseUrl + "/api/gate-details/all";
+
+    return this.http.get(url);
+  }
 }
