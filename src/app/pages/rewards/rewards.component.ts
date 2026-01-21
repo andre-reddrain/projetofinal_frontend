@@ -26,6 +26,7 @@ export class RewardsComponent {
     'Normal': "warn",
     'Hard': "danger"
   }
+selectedTypeReward: any;
 
   getSeverity(gateDetail: any): ButtonSeverity {
     return this.severityMap[gateDetail.difficulty]
@@ -45,7 +46,7 @@ export class RewardsComponent {
     // Load of TypeRewards
     this.typeRewardsService.getAllTypeRewards().subscribe((data: any) => {
       this.typeRewards = data;
-      console.log(this.typeRewards)
+      // console.log(this.typeRewards)
     })
   }
 }
