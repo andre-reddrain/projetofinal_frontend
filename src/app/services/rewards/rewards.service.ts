@@ -4,26 +4,20 @@ import { Injectable } from '@angular/core';
 @Injectable({
   providedIn: 'root'
 })
-export class GateDetailsService {
+export class RewardsService {
   private baseUrl: string = "http://localhost:8080";
 
   constructor(private http: HttpClient) { }
 
-  getGateDetails(gateIds: string[]) {
-    const url = this.baseUrl + "/api/gate-details";
+  getRewardsFromGateDetails(gateDetailsIds: string[]) {
+    const url = this.baseUrl + "/api/rewards";
 
     let params = new HttpParams();
 
-    gateIds.forEach(id => {
-      params = params.append('gateIds', id);
+    gateDetailsIds.forEach(id => {
+      params = params.append('gateDetailsIds', id);
     })
 
     return this.http.get<[]>(url, { params });
-  }
-
-  getAllGateDetails() {
-    const url = this.baseUrl + "/api/gate-details/all";
-
-    return this.http.get(url);
   }
 }

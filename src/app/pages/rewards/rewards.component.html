@@ -4,31 +4,36 @@
         <div *ngFor="let gateDetail of gateDetailsData" class="mt-2">
             <p-button
                 [label]="'[' + gateDetail.difficulty + ']' + ' ' + gateDetail.gateName"
-                [severity]="getSeverity(gateDetail)"></p-button>
+                [severity]="getSeverity(gateDetail)"
+                (onClick)="loadRewards(gateDetail)"></p-button>
         </div>
     </div>
 
     <div class="col-3 p-2">
         <h1>Reward Form</h1>
         <form #rewardForm="ngForm">
-            <label>Type Rewards</label>
-            <p-select [options]="typeRewards" optionLabel="name" name="reward" [(ngModel)]="selectedTypeReward">
-                <!-- Template for the selectedItem -->
-                <ng-template pTemplate="selectedItem" let-item>
-                    <div class="flex align-items-center gap-2">
-                        <img [src]="item.icon" alt="" width="32" height="32" />
-                        <span>{{ item.name }} </span>
-                    </div>
-                </ng-template>
+            <p-floatlabel class="w-56" variant="on">
+                <p-select [options]="typeRewards" inputId="on_label" optionLabel="name" name="reward" [(ngModel)]="selectedTypeReward" styleClass="w-full">
+                    
+                    <!-- Template for the selectedItem -->
+                    <ng-template pTemplate="selectedItem" let-item>
+                        <div class="flex align-items-center gap-2">
+                            <img [src]="item.icon" alt="" width="32" height="32" />
+                            <span>{{ item.name }} </span>
+                        </div>
+                    </ng-template>
 
-                <!-- Template for the Select Item -->
-                <ng-template pTemplate="item" let-item>
-                    <div class="flex align-items-center gap-2">
-                        <img [src]="item.icon" alt="" width="32" height="32" />
-                        <span>{{ item.name }} </span>
-                    </div>
-                </ng-template>
-            </p-select>
+                    <!-- Template for the Select Item -->
+                    <ng-template pTemplate="item" let-item>
+                        <div class="flex align-items-center gap-2">
+                            <img [src]="item.icon" alt="" width="32" height="32" />
+                            <span>{{ item.name }} </span>
+                        </div>
+                    </ng-template>
+                </p-select>
+
+                <label for="on_label">Type Rewards</label>
+            </p-floatlabel>
 
             <label>Quantity</label>
             <p-input-number [required]="true"></p-input-number>
