@@ -13,6 +13,7 @@
         <h1>Reward Form</h1>
         <app-reward-form
             [typeRewards]="typeRewards"
+            [rewardsToInsert]="rewardsToInsert"
             [selectedGateDetails]="selectedGateDetails"
             (submitReward)="onRewardAdded($event)"
         ></app-reward-form>
@@ -20,39 +21,10 @@
 
     <!-- Rewards of GateDetails && Rewards to Insert -->
     <div class="col-4 p-2">
-        <h3>Rewards</h3>
-        <div class="flex flex-wrap gap-2">
-            <ng-container *ngFor="let reward of rewardsData">
-                <app-reward-item 
-                    [reward]="reward"
-                    *ngIf="!reward.isExtraReward"
-                ></app-reward-item>
-            </ng-container>
-        </div>
-        <h3>Extra Rewards</h3>
-        <div class="flex flex-wrap gap-2">
-            <ng-container *ngFor="let reward of rewardsData">
-                <app-reward-item 
-                    [reward]="reward"
-                    *ngIf="reward.isExtraReward"
-                ></app-reward-item>
-            </ng-container>
-        </div>
-        <h3>Rewards to Insert</h3>
-        <div class="flex flex-wrap gap-2 mb-3">
-            <ng-container *ngFor="let reward of rewardsToInsert">
-                <app-reward-item 
-                    [reward]="reward"
-                    [showExtraLabel]="reward.isExtraReward"
-                ></app-reward-item>
-            </ng-container>
-        </div>
-        <p-button
-            label="Submit Rewards"
-            icon="pi pi-check"
-            severity="success"
-            [disabled]="rewardsToInsert.length < 1"
-            (onClick)="submitRewards()">
-        </p-button>
+        <app-reward-list
+            [rewardsData]="rewardsData"
+            [rewardsToInsert]="rewardsToInsert"
+            (submitRewardsRequest)="submitRewards()">
+        </app-reward-list>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import { NgIf, NgClass, NgStyle } from '@angular/common';
+import { NgIf } from '@angular/common';
 import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
@@ -10,13 +10,14 @@ import { SelectModule } from 'primeng/select';
 @Component({
   selector: 'app-reward-form',
   standalone: true,
-  imports: [InputNumberModule, SelectModule, CheckboxModule, FormsModule, FloatLabel, ButtonModule, NgIf, NgStyle],
+  imports: [InputNumberModule, SelectModule, CheckboxModule, FormsModule, FloatLabel, ButtonModule, NgIf],
   templateUrl: './reward-form.component.html',
   styleUrl: './reward-form.component.scss'
 })
 export class RewardFormComponent {
   @Input() typeRewards!: any;
   @Input() selectedGateDetails!: any;
+  @Input() rewardsToInsert: any[] = [];
 
   @Output() submitReward = new EventEmitter<any>();
 
@@ -39,6 +40,13 @@ export class RewardFormComponent {
     };
 
     return map[difficulty] || 'light-dark';
+  }
+
+  canAddReward(): boolean {
+    return !this.rewardsToInsert.some(r =>
+      r.typeReward.id === this.selectedTypeReward.id &&
+      r.isExtraReward === this.isExtraReward
+    );
   }
 
   submit(form: any) {

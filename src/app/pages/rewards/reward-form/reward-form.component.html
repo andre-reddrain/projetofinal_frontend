@@ -69,7 +69,7 @@
         icon="pi pi-plus"
         class="w-full"
         severity="success"
-        [disabled]="rewardForm.invalid"
+        [disabled]="!canAddReward() || rewardForm.invalid"
         (onClick)="submit(rewardForm)"
     ></p-button>
     </form>

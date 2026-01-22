@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
 
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
@@ -8,14 +7,14 @@ import { MessageService } from 'primeng/api';
 import { GateDetailsService } from '../../services/gate-details/gate-details.service';
 import { TypeRewardsService } from '../../services/type-rewards/type-rewards.service';
 import { RewardsService } from '../../services/rewards/rewards.service';
-import { RewardItemComponent } from "./reward-item/reward-item.component";
 import { RewardFormComponent } from "./reward-form/reward-form.component";
 import { RewardGateDetailsComponent } from "./reward-gate-details/reward-gate-details.component";
+import { RewardListComponent } from "./reward-list/reward-list.component";
 
 @Component({
   selector: 'app-rewards',
   standalone: true,
-  imports: [ButtonModule, ToastModule, NgFor, RewardItemComponent, NgIf, RewardFormComponent, RewardGateDetailsComponent],
+  imports: [ButtonModule, ToastModule, RewardFormComponent, RewardGateDetailsComponent, RewardListComponent],
   templateUrl: './rewards.component.html',
   styleUrl: './rewards.component.scss',
   providers: [MessageService]
@@ -66,6 +65,13 @@ export class RewardsComponent {
       // Reset rewardsToInsert
       this.rewardsToInsert = [];
     })
+  }
+
+  canAddReward(newReward: any): boolean {
+    return !this.rewardsToInsert.some(r =>
+      r.typeReward.id === newReward.typeReward.id &&
+      r.isExtraReward === newReward.isExtraReward
+    );
   }
 
   onRewardAdded(reward: any) {

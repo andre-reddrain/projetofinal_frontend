@@ -1,0 +1,34 @@
+<h3>Rewards</h3>
+<div class="flex flex-wrap gap-2">
+    <ng-container *ngFor="let reward of rewardsData">
+        <app-reward-item 
+            [reward]="reward"
+            *ngIf="!reward.isExtraReward"
+        ></app-reward-item>
+    </ng-container>
+</div>
+<h3>Extra Rewards</h3>
+<div class="flex flex-wrap gap-2">
+    <ng-container *ngFor="let reward of rewardsData">
+        <app-reward-item 
+            [reward]="reward"
+            *ngIf="reward.isExtraReward"
+        ></app-reward-item>
+    </ng-container>
+</div>
+<h3>Rewards to Insert</h3>
+<div class="flex flex-wrap gap-2 mb-3">
+    <ng-container *ngFor="let reward of rewardsToInsert">
+        <app-reward-item 
+            [reward]="reward"
+            [showExtraLabel]="reward.isExtraReward"
+        ></app-reward-item>
+    </ng-container>
+</div>
+<p-button
+    label="Submit Rewards"
+    icon="pi pi-check"
+    severity="success"
+    [disabled]="rewardsToInsert.length < 1"
+    (onClick)="submitRewardsRequest.emit()">
+</p-button>
