@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
-import { ButtonModule } from 'primeng/button';
 import { NgFor, NgIf } from '@angular/common';
+
+import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+
 import { GateDetailsService } from '../../services/gate-details/gate-details.service';
 import { TypeRewardsService } from '../../services/type-rewards/type-rewards.service';
 import { RewardsService } from '../../services/rewards/rewards.service';
@@ -11,9 +15,10 @@ import { RewardGateDetailsComponent } from "./reward-gate-details/reward-gate-de
 @Component({
   selector: 'app-rewards',
   standalone: true,
-  imports: [ButtonModule, NgFor, RewardItemComponent, NgIf, RewardFormComponent, RewardGateDetailsComponent],
+  imports: [ButtonModule, ToastModule, NgFor, RewardItemComponent, NgIf, RewardFormComponent, RewardGateDetailsComponent],
   templateUrl: './rewards.component.html',
-  styleUrl: './rewards.component.scss'
+  styleUrl: './rewards.component.scss',
+  providers: [MessageService]
 })
 export class RewardsComponent {
   typeRewards: any;
@@ -27,7 +32,8 @@ export class RewardsComponent {
   constructor(
     private gateDetailsService: GateDetailsService,
     private typeRewardsService: TypeRewardsService,
-    private rewardsService: RewardsService
+    private rewardsService: RewardsService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -63,15 +69,44 @@ export class RewardsComponent {
   }
 
   onRewardAdded(reward: any) {
-    console.log(reward)
     this.rewardsToInsert.push({
       ...reward,
       typeRewardId: reward.typeReward.id,
       gateDetailsId: this.selectedGateDetails.id
     })
+
+    // console.log(this.rewardsToInsert)
   }
 
   submitRewards() {
-    //TODO API call to add on batch
+    if (this.rewardsToInsert.length === 0) return;
+
+    const payload = this.rewardsToInsert.map(r => ({
+      ammount: r.ammount,
+      isExtraReward: r.isExtraReward,
+      gateDetailsId: r.gateDetailsId,
+      typeRewardId: r.typeRewardId
+    }));
+
+    this.rewardsService.createRewardsBulk(payload).subscribe({
+      next: () => {
+        this.showSuccess();
+        this.loadRewards(this.selectedGateDetails)
+        this.rewardsToInsert = [];
+      },
+      error: err => {
+        this.showError();
+        console.error(err);
+      }
+    });
+  }
+
+  // Toast Functions
+  showSuccess() {
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Rewards successfully created!'});
+  }
+
+  showError() {
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error creating rewards!'});
   }
 }

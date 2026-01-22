@@ -20,4 +20,11 @@ export class RewardsService {
 
     return this.http.get<[]>(url, { params });
   }
+
+  createRewardsBulk(rewards: any) {
+    console.log(rewards)
+    const url = this.baseUrl + "/api/rewards/bulk";
+
+    return this.http.post(url, rewards);
+  }
 }
