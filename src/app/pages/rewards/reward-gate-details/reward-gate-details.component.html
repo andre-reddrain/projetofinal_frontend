@@ -1,0 +1,7 @@
+<div *ngFor="let gateDetail of gateDetailsData" class="mt-2">
+    <p-button
+        [label]="'[' + gateDetail.difficulty + ']' + ' ' + gateDetail.gateName"
+        [severity]="getSeverity(gateDetail)"
+        (onClick)="selectGateDetail(gateDetail)">
+    </p-button>
+</div>

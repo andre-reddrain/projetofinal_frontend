@@ -1,50 +1,23 @@
 <div class="grid" style="height: 100%;">
     <div class="col-4 overflow-y-auto h-full p-2">
         <h1>Gate Details</h1>
-        <div *ngFor="let gateDetail of gateDetailsData" class="mt-2">
-            <p-button
-                [label]="'[' + gateDetail.difficulty + ']' + ' ' + gateDetail.gateName"
-                [severity]="getSeverity(gateDetail)"
-                (onClick)="loadRewards(gateDetail)"></p-button>
-        </div>
+        <app-reward-gate-details
+            [gateDetailsData]="gateDetailsData"
+            (gateDetailSelected)="loadRewards($event)"
+            ></app-reward-gate-details>
     </div>
 
+    <!-- Reward Form -->
     <div class="col-3 p-2">
         <h1>Reward Form</h1>
-        <form #rewardForm="ngForm">
-            <p-floatlabel class="w-56" variant="on">
-                <p-select [options]="typeRewards" inputId="on_label" optionLabel="name" name="reward" [(ngModel)]="selectedTypeReward" styleClass="w-full">
-                    
-                    <!-- Template for the selectedItem -->
-                    <ng-template pTemplate="selectedItem" let-item>
-                        <div class="flex align-items-center gap-2">
-                            <img [src]="item.icon" alt="" width="32" height="32" />
-                            <span>{{ item.name }} </span>
-                        </div>
-                    </ng-template>
-
-                    <!-- Template for the Select Item -->
-                    <ng-template pTemplate="item" let-item>
-                        <div class="flex align-items-center gap-2">
-                            <img [src]="item.icon" alt="" width="32" height="32" />
-                            <span>{{ item.name }} </span>
-                        </div>
-                    </ng-template>
-                </p-select>
-
-                <label for="on_label">Type Rewards</label>
-            </p-floatlabel>
-
-            <label>Quantity</label>
-            <p-input-number [required]="true"></p-input-number>
-
-            <label>Is Extra Reward?</label>
-            <p-checkbox></p-checkbox>
-
-            <p-button label="Submit" [disabled]="rewardForm.form.invalid"></p-button>
-        </form>
+        <app-reward-form
+            [typeRewards]="typeRewards"
+            [selectedGateDetails]="selectedGateDetails"
+            (submitReward)="onRewardAdded($event)"
+        ></app-reward-form>
     </div>
 
+    <!-- Rewards of GateDetails && Rewards to Insert -->
     <div class="col-4 p-2">
         <h3>Rewards</h3>
         <div class="flex flex-wrap gap-2">
@@ -65,13 +38,20 @@
             </ng-container>
         </div>
         <h3>Rewards to Insert</h3>
-        <div class="flex flex-wrap gap-2">
+        <div class="flex flex-wrap gap-2 mb-3">
             <ng-container *ngFor="let reward of rewardsToInsert">
                 <app-reward-item 
                     [reward]="reward"
-                    *ngIf="reward.isExtraReward"
+                    [showExtraLabel]="reward.isExtraReward"
                 ></app-reward-item>
             </ng-container>
         </div>
+        <p-button
+            label="Submit Rewards"
+            icon="pi pi-check"
+            severity="success"
+            [disabled]="rewardsToInsert.length < 1"
+            (onClick)="submitRewards()">
+        </p-button>
     </div>
 </div>

@@ -7,6 +7,12 @@
         class="border-round object-contain"
     />
     <div class="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">
-        {{ reward.ammount }}
+        <ng-container *ngIf="showExtraLabel; else normalAmount">
+            <span class="font-semibold">[Extra]</span> {{ reward.ammount }}
+        </ng-container>
+
+        <ng-template #normalAmount>
+            {{ reward.ammount }}
+        </ng-template>
     </div>
 </div>
