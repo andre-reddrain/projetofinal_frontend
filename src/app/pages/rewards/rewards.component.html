@@ -47,5 +47,31 @@
 
     <div class="col-4 p-2">
         <h3>Rewards</h3>
+        <div class="flex flex-wrap gap-2">
+            <ng-container *ngFor="let reward of rewardsData">
+                <app-reward-item 
+                    [reward]="reward"
+                    *ngIf="!reward.isExtraReward"
+                ></app-reward-item>
+            </ng-container>
+        </div>
+        <h3>Extra Rewards</h3>
+        <div class="flex flex-wrap gap-2">
+            <ng-container *ngFor="let reward of rewardsData">
+                <app-reward-item 
+                    [reward]="reward"
+                    *ngIf="reward.isExtraReward"
+                ></app-reward-item>
+            </ng-container>
+        </div>
+        <h3>Rewards to Insert</h3>
+        <div class="flex flex-wrap gap-2">
+            <ng-container *ngFor="let reward of rewardsToInsert">
+                <app-reward-item 
+                    [reward]="reward"
+                    *ngIf="reward.isExtraReward"
+                ></app-reward-item>
+            </ng-container>
+        </div>
     </div>
 </div>
