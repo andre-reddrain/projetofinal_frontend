@@ -24,7 +24,8 @@
         <app-reward-list
             [rewardsData]="rewardsData"
             [rewardsToInsert]="rewardsToInsert"
-            (submitRewardsRequest)="submitRewards()">
+            (submitRewardsRequest)="submitRewards()"
+            (removeRewardRequest)="removeReward($event)">
         </app-reward-list>
     </div>
 </div>

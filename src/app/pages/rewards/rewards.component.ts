@@ -57,28 +57,7 @@ export class RewardsComponent {
     })
   }
 
-  loadRewards(gateDetail: any) {
-    let gateDetailsIds = [gateDetail.id]
-
-    this.selectedGateDetails = gateDetail;
-
-    this.rewardsService.getRewardsFromGateDetails(gateDetailsIds).subscribe((data: any) => {
-      const rewardsData = data.map((reward: { typeRewardId: any; }) => ({
-        ...reward,
-        typeReward: this.typeRewards.find((tr: { id: any; }) => tr.id === reward.typeRewardId)
-      }));
-
-      this.rewardsData = rewardsData;
-
-      this.rewardsData = this.organizeRewards(this.rewardsData);
-
-      // Reset rewardsToInsert
-      this.rewardsToInsert = [];
-    })
-  }
-
   organizeRewards(rewards: any[]): any[] {
-    console.log("Vai organizar!")
     return rewards.slice().sort((a, b) => {
       const aOrder = this.classOrder[a.typeReward?.classType] || 99;
       const bOrder = this.classOrder[b.typeReward?.classType] || 99;
@@ -103,6 +82,30 @@ export class RewardsComponent {
     this.rewardsToInsert = this.organizeRewards(this.rewardsToInsert);
   }
 
+  ///////////////
+  // API Calls //
+  ///////////////
+
+  loadRewards(gateDetail: any) {
+    let gateDetailsIds = [gateDetail.id]
+
+    this.selectedGateDetails = gateDetail;
+
+    this.rewardsService.getRewardsFromGateDetails(gateDetailsIds).subscribe((data: any) => {
+      const rewardsData = data.map((reward: { typeRewardId: any; }) => ({
+        ...reward,
+        typeReward: this.typeRewards.find((tr: { id: any; }) => tr.id === reward.typeRewardId)
+      }));
+
+      this.rewardsData = rewardsData;
+
+      this.rewardsData = this.organizeRewards(this.rewardsData);
+
+      // Reset rewardsToInsert
+      this.rewardsToInsert = [];
+    })
+  }
+
   submitRewards() {
     if (this.rewardsToInsert.length === 0) return;
 
@@ -115,7 +118,7 @@ export class RewardsComponent {
 
     this.rewardsService.createRewardsBulk(payload).subscribe({
       next: () => {
-        this.showSuccess();
+        this.showSuccess('Rewards successfully created!');
         this.loadRewards(this.selectedGateDetails)
         this.rewardsToInsert = [];
       },
@@ -126,9 +129,22 @@ export class RewardsComponent {
     });
   }
 
-  // Toast Functions
-  showSuccess() {
-    this.messageService.add({ severity: 'success', summary: 'Success', detail: 'Rewards successfully created!'});
+  removeReward({ reward, label } : { reward: any; label: string }) {
+    if (label === 'rewardToInsert') {
+      this.rewardsToInsert = this.rewardsToInsert.filter(r => r !== reward);
+      this.showSuccess('Reward removed from ' + label);
+    } else if (label === 'rewardsData') {
+      // Vai fazer a remoção na base de dados!
+    }
+    
+  }
+
+  /////////////////////
+  // Toast Functions //
+  /////////////////////
+
+  showSuccess(message: string) {
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: message});
   }
 
   showError() {

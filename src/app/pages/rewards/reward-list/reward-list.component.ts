@@ -16,4 +16,9 @@ export class RewardListComponent {
   @Input() rewardsToInsert: any[] = [];
 
   @Output() submitRewardsRequest = new EventEmitter<void>();
+  @Output() removeRewardRequest = new EventEmitter<any>();
+
+  onRemoveReward(reward: any, label: string) {
+    this.removeRewardRequest.emit({ reward, label });
+  }
 }

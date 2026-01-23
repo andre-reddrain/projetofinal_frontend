@@ -1,4 +1,5 @@
-<div class="relative w-16 h-16 flex-shrink-0 border-1">
+<p-confirmpopup />
+<div class="reward-icon relative w-16 h-16 flex-shrink-0 border-1">
     <img 
         [src]="reward.typeReward?.icon" 
         alt="{{ reward.typeReward?.name }}"
@@ -6,6 +7,12 @@
         pTooltip="{{ reward.typeReward?.name }}"
         class="border-round object-contain"
     />
+    <div 
+        class="remove-btn absolute top-0 right-0 px-1 py-0.5 cursor-pointer"
+        (click)="confirmRemove($event)"
+    >
+        X
+    </div>
     <div class="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">
         <ng-container *ngIf="showExtraLabel; else normalAmount">
             <span class="font-semibold">[Extra]</span> {{ reward.ammount }}

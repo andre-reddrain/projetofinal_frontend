@@ -4,6 +4,7 @@
         <app-reward-item 
             [reward]="reward"
             *ngIf="!reward.isExtraReward"
+            (removeReward)="onRemoveReward($event, 'rewardsData')"
         ></app-reward-item>
     </ng-container>
 </div>
@@ -13,6 +14,7 @@
         <app-reward-item 
             [reward]="reward"
             *ngIf="reward.isExtraReward"
+            (removeReward)="onRemoveReward($event, 'rewardsData')"
         ></app-reward-item>
     </ng-container>
 </div>
@@ -22,6 +24,7 @@
         <app-reward-item 
             [reward]="reward"
             [showExtraLabel]="reward.isExtraReward"
+            (removeReward)="onRemoveReward($event, 'rewardToInsert')"
         ></app-reward-item>
     </ng-container>
 </div>
