@@ -1,0 +1,1 @@
+Valtan - Fix Gold Values! Normal and Hard give gold + bound gold!

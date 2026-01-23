@@ -35,6 +35,15 @@ export class RewardsComponent {
     private messageService: MessageService
   ) {}
 
+  private classOrder: Record<string, number> = {
+    'Raid Drop': 1,
+    'Honing Material': 2,
+    'Accessory': 3,
+    'Bracelet': 4,
+    'Ability Stone': 5,
+    'Currency': 6
+  };
+
   ngOnInit() {
     // Load of GateDetails
     this.gateDetailsService.getAllGateDetails().subscribe((data: any) => {
@@ -45,7 +54,6 @@ export class RewardsComponent {
     this.typeRewardsService.getAllTypeRewards().subscribe((data: any) => {
       this.typeRewards = data;
       this.selectedTypeReward = this.typeRewards[0]
-      // console.log(this.typeRewards)
     })
   }
 
@@ -62,9 +70,20 @@ export class RewardsComponent {
 
       this.rewardsData = rewardsData;
 
+      this.rewardsData = this.organizeRewards(this.rewardsData);
+
       // Reset rewardsToInsert
       this.rewardsToInsert = [];
     })
+  }
+
+  organizeRewards(rewards: any[]): any[] {
+    console.log("Vai organizar!")
+    return rewards.slice().sort((a, b) => {
+      const aOrder = this.classOrder[a.typeReward?.classType] || 99;
+      const bOrder = this.classOrder[b.typeReward?.classType] || 99;
+      return aOrder - bOrder;
+    });
   }
 
   canAddReward(newReward: any): boolean {
@@ -81,7 +100,7 @@ export class RewardsComponent {
       gateDetailsId: this.selectedGateDetails.id
     })
 
-    // console.log(this.rewardsToInsert)
+    this.rewardsToInsert = this.organizeRewards(this.rewardsToInsert);
   }
 
   submitRewards() {
