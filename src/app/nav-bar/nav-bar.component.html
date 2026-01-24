@@ -1,3 +1,4 @@
+<app-login [(visible)]="visible"></app-login>
 <div class="card">
     <p-menubar [model]="items">
         <ng-template #start>
@@ -5,14 +6,12 @@
                 <h2>LOAPlanner</h2>
             </a>
         </ng-template>
-        <ng-template #item let-item let-root="root">
-            <a pRipple class="flex items-center p-menubar-item-link">
-                <span [class]="item.icon"></span>
-                <span>{{ item.label }}</span>
-            </a>
-        </ng-template>
         <ng-template #end>
-            <div class="flex items-center">
+            <div 
+                class="flex align-items-center cursor-pointer border-1"
+                style="height: var(--menubar-height, 3rem); padding: 0 0.75rem;"
+                (click)="showDialog()"
+            >
                 <span class="pi pi-user mr-2"></span>
                 <span>{{ username }}</span>
             </div>

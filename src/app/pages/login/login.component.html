@@ -1,0 +1,57 @@
+<p-dialog 
+  [header]="mode === 'login' ? 'Login' : 'Register'"
+  [modal]="true"
+  [(visible)]="visible"
+  [dismissableMask]="true"
+  [resizable]="false"
+  [draggable]="false"
+  [style]="{ width: '25rem' }">
+
+  <div class="flex flex-column" style="height: 100%;">
+    <div class="flex flex-column gap-2 flex-grow-1 overflow-auto">
+      
+        <!-- Subtitle -->
+        <span class="p-text-secondary block mb-4">
+            {{ mode === 'login' ? 'Enter your credentials to Sign in.' : 'Create a LOAPLANNER account.' }}
+        </span>
+
+        <!-- Email -->
+        <div class="flex align-items-center gap-4 mb-4">
+            <label for="email" class="font-semibold w-4rem">Email</label>
+            <input pInputText id="email" class="flex-auto" [(ngModel)]="email" autocomplete="off" pSize="Large" />
+        </div>
+
+        <!-- Username -->
+        <div class="flex align-items-center gap-4 mb-4" *ngIf="mode === 'register'">
+            <label for="username" class="font-semibold w-4rem">Username</label>
+            <input pInputText id="username" class="flex-auto" [(ngModel)]="username" autocomplete="off" pSize="Large" />
+        </div>
+
+        <!-- Password -->
+        <div class="flex align-items-center gap-4 mb-4">
+            <label for="password" class="font-semibold w-4rem">Password</label>
+            <input pInputText type="password" id="password" class="flex-auto" [(ngModel)]="password" autocomplete="off" pSize="Large" />
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="flex align-items-center gap-4 mb-4" *ngIf="mode === 'register'">
+            <label for="confirmPassword" class="font-semibold w-4rem">Confirm Password</label>
+            <input pInputText type="password" id="confirmPassword" class="flex-auto" [(ngModel)]="confirmPassword" autocomplete="off" pSize="Large" />
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="flex flex-column gap-2 mt-4">
+      <div class="text-sm">
+        {{ mode === 'login' ? "Not a member?" : "Already have an account?" }}
+        <a class="ml-1 cursor-pointer" (click)="toggleMode()">
+            {{ mode === 'login' ? "Register" : "Login" }}
+        </a>
+      </div>
+      <div class="flex justify-content-between gap-2 justify-end">
+        <p-button label="Cancel" severity="secondary" (click)="visible = false" />
+        <p-button label="Submit" (click)="submit()" />
+      </div>
+    </div>
+  </div>
+</p-dialog>
