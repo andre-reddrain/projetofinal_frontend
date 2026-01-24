@@ -119,11 +119,11 @@ export class RewardsComponent {
     this.rewardsService.createRewardsBulk(payload).subscribe({
       next: () => {
         this.showSuccess('Rewards successfully created!');
-        this.loadRewards(this.selectedGateDetails)
+        this.loadRewards(this.selectedGateDetails);
         this.rewardsToInsert = [];
       },
       error: err => {
-        this.showError();
+        this.showError('Error creating rewards!');
         console.error(err);
       }
     });
@@ -134,7 +134,16 @@ export class RewardsComponent {
       this.rewardsToInsert = this.rewardsToInsert.filter(r => r !== reward);
       this.showSuccess('Reward removed from ' + label);
     } else if (label === 'rewardsData') {
-      // Vai fazer a remoção na base de dados!
+      this.rewardsService.deleteReward(reward.id).subscribe({
+        next: () => {
+          this.showInfo("Reward successfully deleted!");
+          this.loadRewards(this.selectedGateDetails);
+        },
+        error: err => {
+          this.showError('Error deleting reward!');
+          console.error(err);
+        }
+      })
     }
     
   }
@@ -144,10 +153,14 @@ export class RewardsComponent {
   /////////////////////
 
   showSuccess(message: string) {
-    this.messageService.add({ severity: 'success', summary: 'Success', detail: message});
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: message });
   }
 
-  showError() {
-    this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error creating rewards!'});
+  showError(message: string) {
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: message });
+  }
+
+  showInfo(message: string) {
+    this.messageService.add({ severity: 'info', summary: 'Info', detail: message })
   }
 }

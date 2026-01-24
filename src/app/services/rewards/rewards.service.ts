@@ -27,4 +27,10 @@ export class RewardsService {
 
     return this.http.post(url, rewards);
   }
+
+  deleteReward(rewardId: string) {
+    const url = this.baseUrl + "/api/reward/" + rewardId;
+
+    return this.http.delete(url);
+  }
 }

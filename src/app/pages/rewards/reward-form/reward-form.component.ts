@@ -32,6 +32,11 @@ export class RewardFormComponent {
     this.cd.detectChanges();
   }
 
+  // get filteredTypeRewards() {
+  //   // Return all typeRewards except those with tier 3
+  //   return this.typeRewards?.filter((tr: { tier: number; }) => tr.tier !== 3) || [];
+  // }
+
   getDifficultyClass(difficulty: string): string {
     const map: Record<string, string> = {
       'Solo': '#4ade80',

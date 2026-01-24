@@ -1,5 +1,7 @@
 <p-confirmpopup />
-<div class="reward-icon relative w-16 h-16 flex-shrink-0 border-1">
+<div 
+    class="reward-icon relative w-16 h-16 flex-shrink-0 border-1 bg-cover bg-center"
+    [ngStyle]="{'background-image': 'url(' + getBackgroundImage(reward.typeReward?.grade) + ')'}">
     <img 
         [src]="reward.typeReward?.icon" 
         alt="{{ reward.typeReward?.name }}"
