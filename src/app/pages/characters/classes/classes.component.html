@@ -1,0 +1,14 @@
+
+<div class="flex flex-row flex-wrap gap-2">
+    <div *ngFor="let charClass of this.characterClasses">
+        <div class="relative w-16 h-16 flex-shrink-0 border-1 bg-cover bg-center">
+            <img 
+                [src]="charClass.icon" 
+                alt="{{ charClass.subtype }}"
+                width="32" height="32"
+                pTooltip="{{ charClass.type }}"
+                class="w-full h-full border-round object-contain"
+            />
+        </div>
+    </div>
+</div>

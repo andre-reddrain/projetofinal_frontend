@@ -25,5 +25,10 @@ export const routes: Routes = [
         path: 'rewards',
         loadComponent: () =>
             import('./pages/rewards/rewards.component').then(m => m.RewardsComponent)
+    },
+    {
+        path: 'character-classes',
+        loadComponent: () =>
+            import('./pages/characters/classes/classes.component').then(m => m.ClassesComponent)
     }
 ];

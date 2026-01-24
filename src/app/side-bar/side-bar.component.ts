@@ -19,10 +19,11 @@ export class SideBarComponent {
 
   ngOnInit() {
     this.items = [
-      { label: 'Characters', icon: 'pi pi-user', routerLink: '/characters'},
-      { label: 'Raids', icon: 'pi pi-plus', routerLink: '/raids'},
-      { label: 'Activities', icon: 'pi pi-plus', routerLink: '/activities'},
-      { label: 'Rewards', icon: 'pi pi-plus', routerLink: '/rewards'}
+      { label: 'Characters', icon: 'pi pi-user', routerLink: '/characters' },
+      { label: 'Raids', icon: 'pi pi-plus', routerLink: '/raids' },
+      { label: 'Activities', icon: 'pi pi-plus', routerLink: '/activities' },
+      { label: 'Rewards', icon: 'pi pi-plus', routerLink: '/rewards' },
+      { label: 'Character Classes', icon: 'pi pi-plus', routerLink: '/character-classes' }
       // More sidebar items here...
     ]
   }
