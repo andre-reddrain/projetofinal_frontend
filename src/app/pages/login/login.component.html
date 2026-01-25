@@ -8,7 +8,7 @@
   (onHide)="close()"
   [style]="{ width: '25rem' }">
 
-    <form #authForm="ngForm" (ngSubmit)="submit" class="flex flex-column" style="height: 100%;">
+    <form #authForm="ngForm" (ngSubmit)="submit()" class="flex flex-column" style="height: 100%;">
         <div class="flex flex-column gap-2 flex-grow-1 overflow-auto">
         
             <!-- Subtitle -->
@@ -19,25 +19,45 @@
             <!-- Email -->
             <div class="flex align-items-center gap-4 mb-4">
                 <label for="email" class="font-semibold w-4rem">Email</label>
-                <input pInputText id="email" class="flex-auto text-lg" [(ngModel)]="email" autocomplete="off" pSize="Small" [required]="true" />
+                <div class="flex flex-column flex-auto">
+                    <input pInputText id="email" class="flex-auto" name="email" [(ngModel)]="email" (ngModelChange)="onEmailChange($event)" autocomplete="off" [required]="true" [ngClass]="{ 'p-invalid': isEmailInvalid && emailTouched }" />
+                    <small class="p-error mt-1" *ngIf="isEmailInvalid && emailTouched">
+                        Enter a valid email
+                    </small>
+                </div>
             </div>
 
             <!-- Username -->
             <div class="flex align-items-center gap-4 mb-4" *ngIf="mode === 'register'">
                 <label for="username" class="font-semibold w-4rem">Username</label>
-                <input pInputText id="username" class="flex-auto text-lg" [(ngModel)]="username" autocomplete="off" pSize="Large" [required]="true" />
+                <div class="flex flex-column flex-auto">
+                    <input pInputText id="username" class="flex-auto" name="username" [(ngModel)]="username" (ngModelChange)="onUsernameChange($event)" autocomplete="off" [required]="true" [ngClass]="{ 'p-invalid': isUsernameInvalid && usernameTouched }" />
+                    <small class="p-error mt-1" *ngIf="isUsernameInvalid && usernameTouched">
+                        Enter a valid username
+                    </small>
+                </div>
             </div>
 
             <!-- Password -->
             <div class="flex align-items-center gap-4 mb-4">
                 <label for="password" class="font-semibold w-4rem">Password</label>
-                <input pInputText type="password" id="password text-lg" class="flex-auto" [(ngModel)]="password" autocomplete="off" pSize="Large" [required]="true" />
+                <div class="flex flex-column flex-auto">
+                    <input pInputText id="password" type="password" class="flex-auto" name="password" [(ngModel)]="password" (ngModelChange)="onPasswordChange($event)" autocomplete="off" [required]="true" [ngClass]="{ 'p-invalid': isPasswordInvalid && passwordTouched }" />
+                    <small class="p-error mt-1" *ngIf="isPasswordInvalid && passwordTouched">
+                        Enter a valid password
+                    </small>
+                </div>
             </div>
 
             <!-- Confirm Password -->
             <div class="flex align-items-center gap-4 mb-4" *ngIf="mode === 'register'">
                 <label for="confirmPassword" class="font-semibold w-4rem">Confirm Password</label>
-                <input pInputText type="password" id="confirmPassword text-lg" class="flex-auto" [(ngModel)]="confirmPassword" autocomplete="off" pSize="Large" [required]="true" />
+                <div class="flex flex-column flex-auto">
+                    <input pInputText id="confirmPassword" type="password" class="flex-auto" name="confirmPassword" [(ngModel)]="confirmPassword" (ngModelChange)="onConfirmPasswordChange($event)" autocomplete="off" [required]="true" [ngClass]="{ 'p-invalid': isPasswordInvalid && confirmPasswordTouched }" />
+                    <small class="p-error mt-1" *ngIf="isPasswordInvalid && confirmPasswordTouched">
+                        Enter a valid password
+                    </small>
+                </div>
             </div>
         </div>
 
@@ -53,7 +73,7 @@
         </div>
         <div class="flex justify-content-between gap-2 justify-end">
             <p-button label="Cancel" severity="secondary" (click)="visible = false" />
-            <p-button label="Submit" (click)="submit()" type="submit" />
+            <p-button label="Submit" type="submit" [disabled]="!canSubmit" />
         </div>
         </div>
     </form>
