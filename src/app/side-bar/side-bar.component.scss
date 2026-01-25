@@ -5,3 +5,13 @@
   border-right: 1px solid var(--p-content-border-color);
   border-bottom: 1px solid var(--p-content-border-color);
 }
+
+.item-link {
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.item-link:hover {
+  background-color: rgba(211, 211, 211, 0.361) !important;
+}
