@@ -4,6 +4,7 @@ import { DialogModule } from 'primeng/dialog';
 import { FormsModule } from "@angular/forms";
 import { NgClass, NgIf } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
+import { AuthService } from '../../services/auth/auth.service';
 
 
 @Component({
@@ -29,6 +30,8 @@ export class LoginComponent {
   emailTouched = false;
   passwordTouched = false;
   confirmPasswordTouched = false;
+
+  constructor(private authService: AuthService) {}
 
   // TODO Adicionar mais verificações!
   /**
@@ -119,6 +122,20 @@ export class LoginComponent {
   submit() {
     if (this.mode === 'login') {
       console.log("Vai fazer o login!");
+
+      const payload = {
+        email: this.email,
+        password: this.password
+      };
+
+      this.authService.login(payload).subscribe({
+        next: (data: any) => {
+          this.authService.setSession(data.token);
+        },
+        error: err => {
+          console.error(err);
+        }
+      })
     } else {
       console.log("Vai fazer o register!");
     }
