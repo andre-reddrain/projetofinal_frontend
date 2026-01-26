@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { authGuard } from './guards/auth.guard';
 
 export const routes: Routes = [
     {
@@ -9,7 +10,9 @@ export const routes: Routes = [
     {
         path: 'characters',
         loadComponent: () =>
-            import('./pages/characters/characters.component').then(m => m.CharactersComponent)
+            import('./pages/characters/characters.component').then(m => m.CharactersComponent),
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'USER'] }
     },
     {
         path: 'raids',
@@ -24,11 +27,15 @@ export const routes: Routes = [
     {
         path: 'rewards',
         loadComponent: () =>
-            import('./pages/rewards/rewards.component').then(m => m.RewardsComponent)
+            import('./pages/rewards/rewards.component').then(m => m.RewardsComponent),
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
     },
     {
         path: 'character-classes',
         loadComponent: () =>
-            import('./pages/characters/classes/classes.component').then(m => m.ClassesComponent)
+            import('./pages/characters/classes/classes.component').then(m => m.ClassesComponent),
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN'] }
     }
 ];
