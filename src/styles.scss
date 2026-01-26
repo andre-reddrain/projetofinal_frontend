@@ -11,3 +11,9 @@ html, body {
 body {
   font-family: 'Roboto', sans-serif;
 }
+
+/* Hover on the li triggers child text and icon to turn red */
+.p-menu .sign-out-item:hover .p-menu-item-link .p-menu-item-label,
+.p-menu .sign-out-item:hover .p-menu-item-link .p-menu-item-icon {
+  color: red !important;
+}

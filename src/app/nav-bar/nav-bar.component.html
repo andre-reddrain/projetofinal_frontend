@@ -1,19 +1,31 @@
 <app-login [(visible)]="visible"></app-login>
 <div class="card">
-    <p-menubar [model]="items">
+    <p-menubar>
         <ng-template #start>
             <a routerLink="/" class="cursor-pointer no-underline">
                 <h2>LOAPlanner</h2>
             </a>
         </ng-template>
         <ng-template #end>
-            <div 
-                class="flex align-items-center cursor-pointer border-1"
-                style="height: var(--menubar-height, 3rem); padding: 0 0.75rem;"
-                (click)="showDialog()"
-            >
-                <span class="pi pi-user mr-2"></span>
-                <span>{{ username }}</span>
+            <!-- Logged in user -->
+            <div *ngIf="authService.isLoggedIn">
+                <div 
+                    class="flex align-items-center cursor-pointer border-1"
+                    style="height: var(--menubar-height, 3rem); padding: 0 0.75rem;"
+                    (click)="menu.toggle($event)">
+                    <span class="pi pi-user mr-2"></span>
+                    <span>{{ username }}</span>
+                    <p-menu #menu [model]="userOptions" [popup]="true" appendTo="body" styleClass="user-menu"/>
+                </div>
+            </div>
+            <!-- Not logged in user -->
+            <div *ngIf="!authService.isLoggedIn">
+                <div 
+                    class="flex align-items-center cursor-pointer border-1"
+                    style="height: var(--menubar-height, 3rem); padding: 0 0.75rem;"
+                    (click)="showLoginDialog()">
+                    <span>Login</span>
+                </div>
             </div>
         </ng-template>
     </p-menubar>

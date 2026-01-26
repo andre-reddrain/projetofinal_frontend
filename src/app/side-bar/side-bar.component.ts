@@ -1,31 +1,42 @@
 import { Component } from '@angular/core';
 
-import { MenuItem } from 'primeng/api';
 import { RouterModule } from '@angular/router';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
+import { FormsModule } from "@angular/forms";
+import { AuthService } from '../services/auth/auth.service';
 
+interface SidebarItem {
+  label: string;
+  icon: string;
+  routerLink: string;
+  roles?: string[]
+}
 
 @Component({
   selector: 'app-side-bar',
   standalone: true,
-  imports: [RouterModule, NgFor],
+  imports: [RouterModule, NgFor, NgIf, FormsModule],
   templateUrl: './side-bar.component.html',
   styleUrl: './side-bar.component.scss',
 })
 export class SideBarComponent {
-  items: MenuItem[] | undefined;
+  items: SidebarItem[] | undefined;
+
+  constructor(public authService: AuthService) {}
 
   ngOnInit() {
     this.items = [
       {
         label: 'Gold Planner',
         icon: 'assets/type_rewards/universal/gold.png',
-        routerLink: '/'
+        routerLink: '/',
+        roles: ['ADMIN', 'USER']
       },
       {
         label: 'Characters',
         icon: 'assets/classes/fighter/wardancer.png',
-        routerLink: '/characters'
+        routerLink: '/characters',
+        roles: ['ADMIN', 'USER']
       },
       {
         label: 'Raids',
@@ -40,12 +51,14 @@ export class SideBarComponent {
       {
         label: 'Rewards',
         icon: 'assets/type_rewards/honing/t4/destiny_destruction_stone.png',
-        routerLink: '/rewards'
+        routerLink: '/rewards',
+        roles: ['ADMIN']
       },
       {
         label: 'Character Classes', 
         icon: 'assets/classes/assassin/deathblade.png', 
-        routerLink: '/character-classes'
+        routerLink: '/character-classes',
+        roles: ['ADMIN']
       }
     ]
   }

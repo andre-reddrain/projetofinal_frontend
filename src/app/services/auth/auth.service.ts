@@ -19,26 +19,56 @@ export class AuthService {
 
   constructor(private http: HttpClient) { }
 
+  get isLoggedIn(): boolean {
+    return this.currentUser !== null;
+  }
+
+  /**
+   * Calls the API to login a user.
+   * @param payload User inputs (email and password)
+   * @returns Backend response
+   */
   login(payload: any) {
     const url = this.baseUrl + "/api/login";
 
     return this.http.post(url, payload);
   }
 
+  /**
+   * Creates a session from a JWT token.
+   * @param token JWT Token
+   */
   setSession(token: string) {
     localStorage.setItem('token', token);
 
-    this.currentUser = jwtDecode<JwtPayload>(token);
-    console.log("Decoded user:", this.currentUser);
+    this.decodeTokenIntoUser(token);
+    window.location.reload();
   }
 
+  /**
+   * Handles the Logout logic.
+   */
   logout() {
     localStorage.removeItem('token');
     this.currentUser = null;
+    window.location.reload();
   }
 
+  /**
+   * Initial load - Checks if user is already logged in.
+   */
   loadUserFromStorage() {
     const token = localStorage.getItem('token');
+    if (token) {
+      this.decodeTokenIntoUser(token);
+    }
+  }
+
+  /**
+   * Decodes the token, and populates the currentUser.
+   * @param token JWT Token
+   */
+  decodeTokenIntoUser(token: string) {
     if (token) {
       this.currentUser = jwtDecode<JwtPayload>(token);
     }

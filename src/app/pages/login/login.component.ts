@@ -138,6 +138,7 @@ export class LoginComponent {
       })
     } else {
       console.log("Vai fazer o register!");
+      // TODO Register
     }
     this.close();
   }
