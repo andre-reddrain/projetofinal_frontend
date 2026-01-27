@@ -29,7 +29,13 @@ export class AuthService {
    * @returns Backend response
    */
   login(payload: any) {
-    const url = this.baseUrl + "/api/login";
+    const url = this.baseUrl + "/api/auth/login";
+
+    return this.http.post(url, payload);
+  }
+
+  createUser(payload: any) {
+    const url = this.baseUrl + "/api/auth/register";
 
     return this.http.post(url, payload);
   }

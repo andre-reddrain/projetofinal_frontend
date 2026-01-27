@@ -5,14 +5,16 @@ import { FormsModule } from "@angular/forms";
 import { NgClass, NgIf } from '@angular/common';
 import { InputTextModule } from 'primeng/inputtext';
 import { AuthService } from '../../services/auth/auth.service';
-
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [InputTextModule, ButtonModule, DialogModule, FormsModule, NgIf, NgClass],
+  imports: [ToastModule, InputTextModule, ButtonModule, DialogModule, FormsModule, NgIf, NgClass],
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrl: './login.component.scss',
+  providers: [MessageService]
 })
 export class LoginComponent {
   @Input() visible: boolean = false;
@@ -30,8 +32,13 @@ export class LoginComponent {
   emailTouched = false;
   passwordTouched = false;
   confirmPasswordTouched = false;
+  
+  usernameBackendInvalid = false;
+  emailBackendInvalid = false;
+  passwordBackendInvalid = false;
+  confirmPasswordBackendInvalid = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService, private messageService: MessageService) {}
 
   /**
    * Getter to validate Username
@@ -44,8 +51,8 @@ export class LoginComponent {
   }
 
   getUsernameClass() {
-    if (!this.usernameTouched) return '';
-    return this.isUsernameInvalid ? 'p-invalid' : 'valid';
+    if (!this.usernameTouched && !this.usernameBackendInvalid) return '';
+    return (this.isUsernameInvalid || this.usernameBackendInvalid) ? 'p-invalid' : 'valid';
   }
 
   /**
@@ -60,8 +67,8 @@ export class LoginComponent {
   }
 
   getEmailClass() {
-    if (!this.emailTouched) return '';
-    return this.isEmailInvalid ? 'p-invalid' : 'valid';
+    if (!this.emailTouched && !this.emailBackendInvalid) return '';
+    return (this.isEmailInvalid || this.emailBackendInvalid) ? 'p-invalid' : 'valid';
   }
 
   /**
@@ -80,8 +87,8 @@ export class LoginComponent {
   }
 
   getPasswordClass() {
-    if (!this.passwordTouched) return '';
-    return this.isPasswordInvalid ? 'p-invalid' : 'valid';
+    if (!this.passwordTouched && !this.passwordBackendInvalid) return '';
+    return (this.isPasswordInvalid || this.passwordBackendInvalid) ? 'p-invalid' : 'valid';
   }
 
   /**
@@ -97,8 +104,8 @@ export class LoginComponent {
   }
 
   getConfirmPasswordClass() {
-    if (!this.confirmPasswordTouched) return '';
-    return this.isConfirmPasswordInvalid ? 'p-invalid' : 'valid';
+    if (!this.confirmPasswordTouched && !this.confirmPasswordBackendInvalid) return '';
+    return (this.isConfirmPasswordInvalid || this.confirmPasswordBackendInvalid) ? 'p-invalid' : 'valid';
   }
 
   /**
@@ -114,8 +121,8 @@ export class LoginComponent {
 
     // Register
     return (
-      !this.isEmailInvalid && !this.isUsernameInvalid && !this.isPasswordInvalid
-    )
+      !this.isEmailInvalid && !this.isUsernameInvalid && !this.isPasswordInvalid && !this.isConfirmPasswordInvalid
+    );
   }
 
   onUsernameChange(value: string | null) {
@@ -158,8 +165,6 @@ export class LoginComponent {
    */
   submit() {
     if (this.mode === 'login') {
-      console.log("Vai fazer o login!");
-
       const payload = {
         email: this.email,
         password: this.password
@@ -167,17 +172,72 @@ export class LoginComponent {
 
       this.authService.login(payload).subscribe({
         next: (data: any) => {
+          this.showSuccess("Success", "Login successful!");
+          this.setBackendValid()
           this.authService.setSession(data.token);
+          this.close();
         },
         error: err => {
-          console.error(err);
+          this.showError("Login error!", err.error.message);
+          this.setBackendInvalid()
         }
       })
     } else {
-      console.log("Vai fazer o register!");
-      // TODO Register
+      const payload = {
+        username: this.username,
+        email: this.email,
+        password: this.password,
+        confirmPassword: this.confirmPassword
+      };
+
+      this.authService.createUser(payload).subscribe({
+        next: (data: any) => {
+          this.showSuccess("Success", "Registration successful!");
+          this.setBackendValid()
+          this.close();
+        },
+        error: err => {
+          this.showError("Registration error!", err.error.message);
+          this.setBackendInvalid()
+        }
+      })
     }
-    this.close();
+  }
+
+  setBackendValid() {
+    this.emailBackendInvalid = false;
+    this.passwordBackendInvalid = false;
+    
+    if (this.mode === 'register') {
+      this.usernameBackendInvalid = false;
+      this.confirmPasswordBackendInvalid = false;
+    }
+  }
+
+  setBackendInvalid() {
+    this.emailBackendInvalid = true;
+    this.passwordBackendInvalid = true;
+
+    if (this.mode === 'register') {
+      this.usernameBackendInvalid = true;
+      this.confirmPasswordBackendInvalid = true;
+    }
+  }
+
+  /////////////////////
+  // Toast Functions //
+  /////////////////////
+
+  showSuccess(summary: string, message: string) {
+    this.messageService.add({ severity: 'success', summary: summary, detail: message });
+  }
+
+  showError(summary: string, message: string) {
+    this.messageService.add({ severity: 'error', summary: summary, detail: message });
+  }
+
+  showInfo(summary: string, message: string) {
+    this.messageService.add({ severity: 'info', summary: summary, detail: message })
   }
 
   /**
