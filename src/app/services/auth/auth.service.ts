@@ -65,6 +65,21 @@ export class AuthService {
   }
 
   /**
+   * Checks if the Token is expired.
+   * @param token JWT Token
+   * @returns Expired or not (bool)
+   */
+  isTokenExpired(token: string) {
+    try {
+      const decoded: any = jwtDecode(token);
+      const now = Math.floor(Date.now() / 1000);
+      return decoded.exp < now;
+    } catch {
+      return true;
+    }
+  }
+
+  /**
    * Decodes the token, and populates the currentUser.
    * @param token JWT Token
    */

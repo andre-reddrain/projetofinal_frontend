@@ -33,35 +33,72 @@ export class LoginComponent {
 
   constructor(private authService: AuthService) {}
 
-  // TODO Adicionar mais verificações!
   /**
    * Getter to validate Username
    */
   get isUsernameInvalid(): boolean {
-    if (!this.username || this.username.trim().length === 0) return true;
+    if (!this.usernameTouched) return false;
+    if (!this.username || this.username.trim().length === 0 || this.username.length < 3) return true;
 
     return false;
+  }
+
+  getUsernameClass() {
+    if (!this.usernameTouched) return '';
+    return this.isUsernameInvalid ? 'p-invalid' : 'valid';
   }
 
   /**
    * Getter to validate Email
    */
   get isEmailInvalid(): boolean {
+    if (!this.emailTouched) return false;
     if (!this.email || this.email.trim().length === 0) return true;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return !emailRegex.test(this.email.trim());
   }
 
+  getEmailClass() {
+    if (!this.emailTouched) return '';
+    return this.isEmailInvalid ? 'p-invalid' : 'valid';
+  }
+
   /**
    * Getter to validate Password
    */
   get isPasswordInvalid(): boolean {
-    if (!this.password || this.password.trim().length === 0) return true;
+    if (this.password == null) return false;
+    if (this.password.trim().length === 0) return false;
 
+    if (this.mode === 'register') {
+      // Password is 8 chars, 1 lowercase, 1 uppercase, 1 number, 1 special char
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
+      return !passwordRegex.test(this.password.trim())
+    }
+    return false;
+  }
+
+  getPasswordClass() {
+    if (!this.passwordTouched) return '';
+    return this.isPasswordInvalid ? 'p-invalid' : 'valid';
+  }
+
+  /**
+   * Getter to validate ConfirmPassword
+   */
+  get isConfirmPasswordInvalid(): boolean {
+    if (!this.confirmPasswordTouched) return false;
+
+    // Password = ConfirmPassword
     if (this.mode === 'register' && this.password !== this.confirmPassword) return true;
 
     return false;
+  }
+
+  getConfirmPasswordClass() {
+    if (!this.confirmPasswordTouched) return '';
+    return this.isConfirmPasswordInvalid ? 'p-invalid' : 'valid';
   }
 
   /**
