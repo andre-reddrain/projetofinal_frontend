@@ -1,1 +1,32 @@
-<p>characters works!</p>
+<p-toast />
+<div *ngFor="let character of characters" class="col-12">
+    <div class="block border-solid">
+        <div class="flex flex-row card shadow-3 p-3" style="position: relative; min-height: 100px;">
+            
+            <!-- Character icon and name -->
+            <div class="flex flex-column col-3">
+                <div class="flex align-items-center mb-2">
+                    <img [src]="character.characterClass.icon" pTooltip="{{ character.characterClass.type }}" width="32" height="32" class="mr-2">
+                    <input pInputText id="name-{{character.name}}" type="text" class="flex-grow-1 min-w-0" [(ngModel)]="character.name">
+                </div>
+                <div class="flex align-items-center">
+                    <label for="ilvl-{{character.name}}" class="mr-2">Item level</label>
+                    <p-inputnumber id="ilvl-{{character.name}}" type="text" class="flex-grow-1" [(ngModel)]="character.ilvl" [showButtons]="true"  [min]="0" [max]="1800" [inputStyle]="{width: '100px'}" />
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="flex col-3 flex-column">
+                <div class="flex">
+                    <textarea pTextarea id="desc-{{character.name}}" [(ngModel)]="character.description" style="resize: none; height: 5rem;" class="flex-grow-1"></textarea>
+                </div>
+            </div>
+
+            <!-- Buttons aligned to bottom-right -->
+            <div class="absolute bottom-0 right-0 p-2">
+                <p-button type="button" label="Save" icon="pi pi-check" class="mr-2" (click)="updateCharacter(character)"></p-button>
+                <p-button type="button" label="Delete" icon="pi pi-trash" severity="danger" (click)="deleteCharacter(character)"></p-button>
+            </div>
+        </div>
+    </div>
+</div>
