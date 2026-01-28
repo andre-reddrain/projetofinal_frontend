@@ -4,8 +4,10 @@ import { jwtDecode } from 'jwt-decode';
 
 interface JwtPayload {
   sub: string;
+  userId: string;
   role: string;
   username: string;
+  iat: number;
   exp: number;
 }
 
@@ -93,5 +95,9 @@ export class AuthService {
     if (token) {
       this.currentUser = jwtDecode<JwtPayload>(token);
     }
+  }
+
+  get userId(): string | null {
+    return this.currentUser?.userId ?? null;
   }
 }
