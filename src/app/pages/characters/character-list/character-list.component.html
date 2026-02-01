@@ -1,0 +1,57 @@
+<p-toast />
+<div class="col-12">
+    <form [formGroup]="form" class="block border-round border-2">
+        <div class="flex flex-row card shadow-3 p-3" style="position: relative; min-height: 100px;">
+            <!-- Left Column -->
+            <div class="flex flex-column col-3">
+                <!-- Character icon and name -->
+                <div class="flex align-items-center mb-2">
+                    <img [src]="character.characterClass.icon" pTooltip="{{ character.characterClass.type }}" width="32" height="32" class="mr-2">
+                    <input pInputText
+                        id="name-{{character.name}}"
+                        type="text"
+                        class="flex-grow-1 min-w-0"
+                        formControlName="name"
+                        name="name-{{character.name}}"
+                        [class.border-orange-500]="hasChanged('name')">
+                </div>
+                <!-- Character ILVL -->
+                <div class="flex align-items-center">
+                    <label for="ilvl-{{character.name}}" class="mr-2">Item level</label>
+                    <p-inputnumber 
+                        id="ilvl-{{character.name}}"
+                        name="ilvl-{{character.name}}"
+                        class="flex-grow-1"
+                        formControlName="ilvl"
+                        [showButtons]="true" 
+                        [min]="0"
+                        [max]="1800"
+                        [class.changed]="hasChanged('ilvl')"
+                        [inputStyle]="hasChanged('ilvl') 
+                            ? { 'border': '1px solid #f97316', 'border-radius': '0.25rem', 'width': '100px' } 
+                            : { 'width': '100px' }" />
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="flex col-3 flex-column">
+                <div class="flex">
+                    <textarea pTextarea
+                        id="desc-{{character.name}}"
+                        name="desc-{{character.name}}"
+                        formControlName="description"
+                        style="resize: none; height: 5rem;"
+                        class="flex-grow-1"
+                        [class.border-orange-500]="hasChanged('description')">
+                    </textarea>
+                </div>
+            </div>
+
+            <!-- Buttons aligned to bottom-right -->
+            <div class="absolute bottom-0 right-0 p-2">
+                <p-button type="button" label="Save" icon="pi pi-check" class="mr-2" (click)="updateCharacter(character)" [disabled]="!isChanged()"></p-button>
+                <p-button type="button" label="Delete" icon="pi pi-trash" severity="danger" (click)="deleteCharacter(character)"></p-button>
+            </div>
+        </div>
+    </form>
+</div>

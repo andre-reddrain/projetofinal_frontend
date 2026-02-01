@@ -7,15 +7,14 @@ import { NgFor } from '@angular/common';
 import { MessageService } from 'primeng/api';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
-import { Tooltip } from "primeng/tooltip";
-import { InputText } from "primeng/inputtext";
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
+import { CharacterListComponent } from "./character-list/character-list.component";
 
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [TextareaModule, InputNumberModule, ButtonModule, FormsModule, Toast, NgFor, Tooltip, InputText],
+  imports: [TextareaModule, InputNumberModule, ButtonModule, FormsModule, Toast, CharacterListComponent, NgFor],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.scss',
   providers: [MessageService]
@@ -50,6 +49,10 @@ export class CharactersComponent {
     })
   }
 
+  trackByCharacterId(index: number, character: any) {
+    return character.id;
+  }
+
   listCharacters() {
     this.characterService.getCharactersOfUser().subscribe({
       next: (data: any) => {
@@ -57,8 +60,15 @@ export class CharactersComponent {
           ...character,
           characterClass: this.characterClasses.find((cc: { id: any; }) => cc.id === character.characterClassId)
         }))
+
+        // Tests only!
+        // const charactersWithDuplicates = [
+        //   ...charactersData,
+        //   ...charactersData.map((c: any) => ({ ...c })) // shallow copy
+        // ];
         this.characters = charactersData;
-        console.log(this.characters);
+        // this.characters = charactersWithDuplicates;
+        // console.log(this.characters);
       },
       error: err => {
         console.error(err);
