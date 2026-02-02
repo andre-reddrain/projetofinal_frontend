@@ -1,10 +1,10 @@
-import { NgClass, NgStyle } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
+import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { Toast } from 'primeng/toast';
 import { Tooltip } from 'primeng/tooltip';
@@ -22,7 +22,7 @@ interface Character {
 @Component({
   selector: 'app-character-list',
   standalone: true,
-  imports: [TextareaModule, InputNumberModule, ButtonModule, ReactiveFormsModule, Toast, Tooltip, InputText],
+  imports: [TextareaModule, InputNumberModule, ButtonModule, ReactiveFormsModule, Toast, Tooltip, InputText, SelectModule],
   templateUrl: './character-list.component.html',
   styleUrl: './character-list.component.scss',
   providers: [MessageService]
