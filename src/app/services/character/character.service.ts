@@ -20,4 +20,16 @@ export class CharacterService {
 
     return this.http.post(url, payload);
   }
+
+  updateCharacter(characterId: string, payload: any) {
+    const url = this.baseUrl + "/api/character/" + characterId;
+
+    return this.http.put(url, payload);
+  }
+
+  deleteCharacter(characterId: string) {
+    const url = this.baseUrl + "/api/character/" + characterId;
+
+    // return this.http.delete(url);
+  }
 }

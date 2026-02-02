@@ -94,12 +94,4 @@ export class CharactersComponent {
       }
     })
   }
-
-  updateCharacter(character: any) {
-
-  }
-
-  deleteCharacter(character: any) {
-
-  }
 }

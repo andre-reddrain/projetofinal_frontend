@@ -8,6 +8,7 @@ import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
 import { Toast } from 'primeng/toast';
 import { Tooltip } from 'primeng/tooltip';
+import { CharacterService } from '../../../services/character/character.service';
 
 interface Character {
   id: string;
@@ -15,6 +16,7 @@ interface Character {
   description: string;
   ilvl: number;
   characterClass: any;
+  characterClassId: string;
   chaosRestCounter: number;
   guardianRestCounter: number;
 }
@@ -36,9 +38,13 @@ export class CharacterListComponent {
 
   initialValues!: any;
 
-  constructor(private fb: FormBuilder) {}
+  constructor(private fb: FormBuilder, private characterService: CharacterService) {}
 
   ngOnInit() {
+    this.loadForm();
+  }
+
+  loadForm() {
     this.form = this.fb.group({
       name: [this.character.name],
       description: [this.character.description],
@@ -49,8 +55,6 @@ export class CharacterListComponent {
     });
 
     this.initialValues = this.form.value;
-
-    console.log(this.initialValues);
   }
 
   isChanged(): boolean {
@@ -61,8 +65,33 @@ export class CharacterListComponent {
     return this.form.get(controlName)?.value !== this.initialValues[controlName];
   }
 
-  updateCharacter(character: any) {
+  updateCharacter(characterId: string) {
+    if (!this.form.dirty) return;
 
+    const payload = {
+      name: this.form.get('name')?.value,
+      description: this.form.get('description')?.value,
+      ilvl: this.form.get('ilvl')?.value,
+      chaosRestCounter: this.form.get('chaosRestCounter')?.value,
+      guardianRestCounter: this.form.get('guardianRestCounter')?.value,
+      classId: this.form.get('characterClass')?.value.id
+    }
+
+    
+
+    this.characterService.updateCharacter(characterId, payload).subscribe({
+      next: (data: any) => {
+        // Update of the character to match the updated info
+        this.character = data;
+        this.character.characterClass = this.characterClasses.find((cc: { id: any; }) => cc.id === this.character.characterClassId)
+
+        // Reset form
+        this.loadForm();
+      },
+      error: err => {
+        console.error(err);
+      }
+    })
   }
 
   deleteCharacter(character: any) {
