@@ -33,7 +33,8 @@ export class CharactersComponent {
   constructor(
     private characterService: CharacterService,
     private characterClassesService: CharacterClassesService,
-    private authService: AuthService
+    private authService: AuthService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit() {
@@ -93,5 +94,31 @@ export class CharactersComponent {
         // Create error!
       }
     })
+  }
+
+  handleResponseMessage(response: any) {
+    if (response.type === 'info') {
+      this.showInfo(response.message);
+    } else if (response.type === 'error') {
+      this.showError(response.message);
+    } else if (response.type === 'success') {
+      this.showSuccess(response.message);
+    }
+  }
+
+  /////////////////////
+  // Toast Functions //
+  /////////////////////
+
+  showSuccess(message: string) {
+    this.messageService.add({ severity: 'success', summary: 'Success', detail: message });
+  }
+
+  showError(message: string) {
+    this.messageService.add({ severity: 'error', summary: 'Error', detail: message });
+  }
+
+  showInfo(message: string) {
+    this.messageService.add({ severity: 'info', summary: 'Info', detail: message })
   }
 }

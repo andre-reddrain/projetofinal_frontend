@@ -4,6 +4,7 @@
     *ngFor="let character of characters; trackBy: trackByCharacterId"
     [character]="character"
     [characterClasses]="characterClasses"
+    (responseMessage)="handleResponseMessage($event)"
 ></app-character-list>
 
 <!-- <div class="block border-solid">

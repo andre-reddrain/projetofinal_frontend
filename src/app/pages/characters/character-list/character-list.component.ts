@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -32,6 +32,8 @@ interface Character {
 export class CharacterListComponent {
   @Input() character!: Character;
   @Input() characterClasses: any;
+
+  @Output() responseMessage = new EventEmitter<any>();
 
   // Form vars
   form!: FormGroup;
@@ -77,8 +79,6 @@ export class CharacterListComponent {
       classId: this.form.get('characterClass')?.value.id
     }
 
-    
-
     this.characterService.updateCharacter(characterId, payload).subscribe({
       next: (data: any) => {
         // Update of the character to match the updated info
@@ -87,8 +87,17 @@ export class CharacterListComponent {
 
         // Reset form
         this.loadForm();
+
+        this.responseMessage.emit({
+          type: 'info',
+          message: `${this.character.name} successfully updated!`
+        });
       },
       error: err => {
+        this.responseMessage.emit({
+          type: 'error',
+          message: 'Error updating character!'
+        });
         console.error(err);
       }
     })
