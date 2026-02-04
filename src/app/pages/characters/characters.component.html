@@ -1,11 +1,23 @@
 <p-toast />
-<h1>Characters</h1>
+<!-- Create character Form -->
+<app-character-form
+    [(visible)]="visible"
+    [characterClasses]="characterClasses"
+    (responseMessage)="handleResponseMessage($event)">
+</app-character-form>
+
+<div class="flex align-items-center justify-content-between mt-2 mb-2">
+    <h1 class="m-0">Characters</h1>
+    <p-button icon="pi pi-plus" class="mr-2" [rounded]="true" (onClick)="showCharacterForm()" />
+</div>
+
+<!-- Character List + Edit Form -->
 <app-character-list
     *ngFor="let character of characters; trackBy: trackByCharacterId"
     [character]="character"
     [characterClasses]="characterClasses"
-    (responseMessage)="handleResponseMessage($event)"
-></app-character-list>
+    (responseMessage)="handleResponseMessage($event)">
+</app-character-list>
 
 <!-- <div class="block border-solid">
     buh

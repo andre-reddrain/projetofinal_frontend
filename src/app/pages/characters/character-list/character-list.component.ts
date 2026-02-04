@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
@@ -24,10 +23,10 @@ interface Character {
 @Component({
   selector: 'app-character-list',
   standalone: true,
-  imports: [TextareaModule, InputNumberModule, ButtonModule, ReactiveFormsModule, Toast, Tooltip, InputText, SelectModule],
+  imports: [TextareaModule, InputNumberModule, ButtonModule, ReactiveFormsModule, Tooltip, InputText, SelectModule],
   templateUrl: './character-list.component.html',
   styleUrl: './character-list.component.scss',
-  providers: [MessageService]
+  providers: []
 })
 export class CharacterListComponent {
   @Input() character!: Character;
@@ -90,13 +89,15 @@ export class CharacterListComponent {
 
         this.responseMessage.emit({
           type: 'info',
-          message: `${this.character.name} successfully updated!`
+          message: `${this.character.name} successfully updated!`,
+          action: 'toast-only'
         });
       },
       error: err => {
         this.responseMessage.emit({
           type: 'error',
-          message: 'Error updating character!'
+          message: 'Error updating character!',
+          action: 'toast-only'
         });
         console.error(err);
       }

@@ -1,0 +1,130 @@
+<p-dialog
+    header="Create Character"
+    [modal]="true"
+    [(visible)]="visible"
+    [draggable]="false"
+    [resizable]="false"
+    [dismissableMask]="true"
+    (onHide)="close()"
+    [style]="{ width: '27rem' }">
+
+    <form [formGroup]="form" class="block">
+        <div class="flex flex-column gap-2 flex-grow-1 overflow-auto" style="position: relative; min-height: 100px;">
+            <!-- Character name -->
+            <div class="flex align-items-center gap-2 mb-2">
+                <label for="name" class="font-semibold w-5rem mr-1">Name</label>
+                <div class="flex flex-column flex-auto">
+                    <input pInputText
+                        id="name"
+                        type="text"
+                        class="flex-auto min-w-0"
+                        formControlName="name"
+                        name="name"
+                        [ngClass]="{'ng-invalid ng-dirty': isInvalidAndTouched('name')}"
+                    >
+
+                    <!-- Errors -->
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('name') && f.name.errors?.['required']">
+                        Name is required
+                    </small>
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('name') && f.name.errors?.['minlength']">
+                        Name must be at least 4 characters
+                    </small>
+                </div>
+            </div>
+
+            <!-- Character ILVL -->
+            <div class="flex align-items-center gap-2 mb-2">
+                <label for="ilvl" class="font-semibold w-5rem mr-1">Item level</label>
+                <div class="flex flex-column flex-auto">
+                    <p-inputnumber 
+                        inputId="ilvl"
+                        name="ilvl"
+                        class="flex-auto min-w-0"
+                        formControlName="ilvl"
+                        [showButtons]="true" 
+                        [min]="0"
+                        [max]="1800"
+                        [ngClass]="{'ng-invalid ng-dirty': isInvalidAndTouched('ilvl')}"
+                    />
+
+                    <!-- Errors -->
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('ilvl') && f.ilvl.errors?.['required']">
+                        Item level is required
+                    </small>
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('ilvl') && f.ilvl.errors?.['min']">
+                        Minimum Item level is 0
+                    </small>
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('ilvl') && f.ilvl.errors?.['max']">
+                        Maximum Item level is 1800
+                    </small>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="flex align-items-center gap-2 mb-2">
+                <label for="desc" class="font-semibold w-5rem mr-1">Description</label>
+                <div class="flex flex-column flex-auto">
+                    <textarea pTextarea
+                        id="desc"
+                        name="desc"
+                        formControlName="description"
+                        style="resize: none; height: 5rem;"
+                        class="flex-auto"
+                        maxlength="255"
+                        [ngClass]="{'ng-invalid ng-dirty': isInvalidAndTouched('description')}">
+                    </textarea>
+                    <small class="text-500">
+                        {{ (f.description.value?.length || 0) }} / 255
+                    </small>
+
+                    <!-- Errors -->
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('description') && f.description.errors?.['maxlength']">
+                        Description cannot exceed 255 characters
+                    </small>
+                </div>
+            </div>
+
+            <!-- Character Classes Select -->
+            <div class="flex align-items-center gap-2 mb-2">
+                <label class="font-semibold w-5rem mr-1">Class</label>
+                <div class="flex flex-column flex-auto">
+                    <p-select
+                        formControlName="characterClass"
+                        [options]="characterClasses"
+                        optionLabel="type"
+                        styleClass="flex-auto min-w-0"
+                        appendTo="body"
+                        [ngClass]="{'ng-invalid ng-dirty': isInvalidAndTouched('characterClass')}">
+
+                        <!-- Template for the selectedItem -->
+                        <ng-template pTemplate="selectedItem" let-item>
+                            <div class="flex flex-auto align-items-center gap-2">
+                                <img [src]="item.icon" width="32" height="32" />
+                                <span>{{ item.type }}</span>
+                            </div>
+                        </ng-template>
+
+                        <!-- Template for the Select Item -->
+                        <ng-template pTemplate="item" let-item>
+                            <div class="flex flex-auto align-items-center gap-2">
+                                <img [src]="item.icon" width="32" height="32" />
+                                <span>{{ item.type }}</span>
+                            </div>
+                        </ng-template>
+                    </p-select>
+
+                    <!-- Errors -->
+                    <small class="p-error mt-1" *ngIf="isInvalidAndTouched('characterClass') && f.characterClass.errors?.['required']">
+                        Class is required
+                    </small>
+                </div>
+            </div>
+
+            <!-- Footer -->
+            <div class="flex justify-content-end gap-2 justify-end">
+                <p-button type="button" label="Create" icon="pi pi-check" class="mr-2" (click)="createCharacter()" [disabled]="!this.form.valid"></p-button>
+            </div>
+        </div>
+    </form>
+</p-dialog>

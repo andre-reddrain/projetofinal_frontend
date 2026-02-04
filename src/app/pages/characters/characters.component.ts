@@ -10,11 +10,12 @@ import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
 import { CharacterListComponent } from "./character-list/character-list.component";
+import { CharacterFormComponent } from "./character-form/character-form.component";
 
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [TextareaModule, InputNumberModule, ButtonModule, FormsModule, Toast, CharacterListComponent, NgFor],
+  imports: [TextareaModule, InputNumberModule, ButtonModule, FormsModule, Toast, CharacterListComponent, NgFor, CharacterFormComponent],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.scss',
   providers: [MessageService]
@@ -28,7 +29,9 @@ export class CharactersComponent {
   characterClasses: any;
   characters: any;
 
-  selectedCharacterClass: any ;
+  selectedCharacterClass: any;
+
+  visible: boolean = false;
 
   constructor(
     private characterService: CharacterService,
@@ -62,14 +65,7 @@ export class CharactersComponent {
           characterClass: this.characterClasses.find((cc: { id: any; }) => cc.id === character.characterClassId)
         }))
 
-        // Tests only!
-        // const charactersWithDuplicates = [
-        //   ...charactersData,
-        //   ...charactersData.map((c: any) => ({ ...c })) // shallow copy
-        // ];
         this.characters = charactersData;
-        // this.characters = charactersWithDuplicates;
-        // console.log(this.characters);
       },
       error: err => {
         console.error(err);
@@ -77,33 +73,51 @@ export class CharactersComponent {
     })
   }
 
-  submitCharacter() {
-    const payload = {
-      userId: this.authService.userId,
-      classId: this.selectedCharacterClass.id,
-      name: this.name,
-      description: this.description,
-      ilvl: this.ilvl
+  handleResponseMessage(response: any) {
+    // Handle action
+    switch (response.action) {
+      case 'update-local':
+        if (response.payload) {
+          // Add characterClass from characterClassId
+          const char = response.payload;
+          char.characterClass = this.characterClasses.find((cc: { id: any; }) => cc.id === char.characterClassId)
+          this.characters.push(char);
+        }
+        break;
+
+      case 'toast-only':
+      default:
+        break;
     }
 
-    this.characterService.createCharacter(payload).subscribe({
-      next: (data: any) => {
-        // Create successful!
-      },
-      error: err => {
-        // Create error!
-      }
-    })
+    // Handle toast type
+    switch (response.type) {
+      case 'info':
+        this.showInfo(response.message);
+        break;
+
+      case 'error':
+        this.showError(response.message);
+        break;
+
+      case 'success':
+        this.showSuccess(response.message);
+        break;
+      default:
+        break;
+    }
   }
 
-  handleResponseMessage(response: any) {
-    if (response.type === 'info') {
-      this.showInfo(response.message);
-    } else if (response.type === 'error') {
-      this.showError(response.message);
-    } else if (response.type === 'success') {
-      this.showSuccess(response.message);
-    }
+  /////////////////////
+  // Modal Functions //
+  /////////////////////
+
+  showCharacterForm() {
+    this.visible = !this.visible;
+  }
+
+  closeCharacterForm() {
+    this.visible = false;
   }
 
   /////////////////////
