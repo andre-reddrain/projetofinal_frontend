@@ -5,9 +5,10 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { InputText } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { TextareaModule } from 'primeng/textarea';
-import { Toast } from 'primeng/toast';
 import { Tooltip } from 'primeng/tooltip';
 import { CharacterService } from '../../../services/character/character.service';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmPopup } from 'primeng/confirmpopup';
 
 interface Character {
   id: string;
@@ -23,23 +24,27 @@ interface Character {
 @Component({
   selector: 'app-character-list',
   standalone: true,
-  imports: [TextareaModule, InputNumberModule, ButtonModule, ReactiveFormsModule, Tooltip, InputText, SelectModule],
+  imports: [TextareaModule, InputNumberModule, ButtonModule, ReactiveFormsModule, Tooltip, InputText, SelectModule, ConfirmPopup],
   templateUrl: './character-list.component.html',
   styleUrl: './character-list.component.scss',
-  providers: []
+  providers: [ConfirmationService]
 })
 export class CharacterListComponent {
   @Input() character!: Character;
   @Input() characterClasses: any;
 
   @Output() responseMessage = new EventEmitter<any>();
+  @Output() deleteCharacter = new EventEmitter<any>();
 
   // Form vars
   form!: FormGroup;
 
   initialValues!: any;
 
-  constructor(private fb: FormBuilder, private characterService: CharacterService) {}
+  constructor(
+    private fb: FormBuilder,
+    private confirmationService: ConfirmationService,
+    private characterService: CharacterService) {}
 
   ngOnInit() {
     this.loadForm();
@@ -104,7 +109,23 @@ export class CharacterListComponent {
     })
   }
 
-  deleteCharacter(character: any) {
-
+  confirmDelete(event: Event) {
+    this.confirmationService.confirm({
+      target: event.target as EventTarget,
+      message: 'Do you want to delete ' + this.character.name + '?',
+      icon: 'pi pi-exclamation-circle',
+      rejectButtonProps: {
+        label: 'Cancel',
+        severity: 'secondary',
+        outlined: true
+      },
+      acceptButtonProps: {
+        label: 'Delete',
+        severity: 'danger'
+      },
+      accept: () => {
+        this.deleteCharacter.emit(this.character.id);
+      }
+    })
   }
 }

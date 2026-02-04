@@ -73,7 +73,40 @@ export class CharactersComponent {
     })
   }
 
+  deleteCharacter(characterId: string) {
+    const character = this.characters.find((c: { id: string; }) => c.id === characterId);
+
+    if (!character) return;
+
+    this.characterService.deleteCharacter(characterId).subscribe({
+      next:() => {
+        // Update UI
+        this.characters = this.characters.filter((c: { id: string; }) => c.id !== characterId);
+
+        const response = {
+          type: 'info',
+          message: `${character.name} successfully deleted!`,
+          action: 'toast-only'
+        };
+
+        this.handleResponseMessage(response);
+      },
+      error: err => {
+        const response = {
+          type: 'error',
+          message: 'Error deleting character!',
+          action: 'toast-only'
+        };
+
+        this.handleResponseMessage(response);
+        console.error(err);
+      }
+    })
+  }
+
   handleResponseMessage(response: any) {
+    if (!response.action) response.action = 'toast-only';
+
     // Handle action
     switch (response.action) {
       case 'update-local':

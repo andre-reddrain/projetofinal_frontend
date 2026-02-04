@@ -30,6 +30,6 @@ export class CharacterService {
   deleteCharacter(characterId: string) {
     const url = this.baseUrl + "/api/character/" + characterId;
 
-    // return this.http.delete(url);
+    return this.http.delete(url);
   }
 }
