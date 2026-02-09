@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
@@ -36,19 +36,22 @@ export class CharacterListComponent {
   @Output() responseMessage = new EventEmitter<any>();
   @Output() deleteCharacter = new EventEmitter<any>();
 
+  private fb: FormBuilder = inject(FormBuilder);
+
   // Form vars
   form!: FormGroup;
 
   initialValues!: any;
 
   constructor(
-    private fb: FormBuilder,
     private confirmationService: ConfirmationService,
     private characterService: CharacterService) {}
 
   ngOnInit() {
     this.loadForm();
   }
+
+  //TODO Validações!
 
   loadForm() {
     this.form = this.fb.group({
@@ -74,14 +77,8 @@ export class CharacterListComponent {
   updateCharacter(characterId: string) {
     if (!this.form.dirty) return;
 
-    const payload = {
-      name: this.form.get('name')?.value,
-      description: this.form.get('description')?.value,
-      ilvl: this.form.get('ilvl')?.value,
-      chaosRestCounter: this.form.get('chaosRestCounter')?.value,
-      guardianRestCounter: this.form.get('guardianRestCounter')?.value,
-      classId: this.form.get('characterClass')?.value.id
-    }
+    let payload = this.form.getRawValue();
+    payload = {...payload, classId: this.form.get('characterClass')?.value.id};
 
     this.characterService.updateCharacter(characterId, payload).subscribe({
       next: (data: any) => {

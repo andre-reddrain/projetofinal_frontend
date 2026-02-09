@@ -29,7 +29,7 @@ export class SideBarComponent {
       {
         label: 'Gold Planner',
         icon: 'assets/type_rewards/universal/gold.png',
-        routerLink: '/',
+        routerLink: '/planner',
         roles: ['ADMIN', 'USER']
       },
       {
