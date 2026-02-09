@@ -16,6 +16,7 @@ interface Character {
   description: string;
   ilvl: number;
   characterClass: any;
+  classIcon: string;
   characterClassId: string;
   chaosRestCounter: number;
   guardianRestCounter: number;

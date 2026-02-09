@@ -1,1 +1,9 @@
-<p>planner works!</p>
+<div>
+    <div class="flex flex-row">
+        @for (character of characters; track $index) {
+            <div class="col-3">
+                <h1>{{ character.name }}</h1>
+            </div>
+        }
+    </div>
+</div>
