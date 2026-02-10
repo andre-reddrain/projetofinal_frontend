@@ -1,9 +1,10 @@
-import { Component, ElementRef, ViewChild } from '@angular/core';
+import { Component, ElementRef, Host, HostListener, ViewChild } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TableModule } from 'primeng/table';
 import { ToggleButtonModule } from 'primeng/togglebutton';
+import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
 import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 import { CharacterService } from '../../services/character/character.service';
@@ -13,7 +14,7 @@ import { RaidsService } from '../../services/raids/raids.service';
 @Component({
   selector: 'app-planner',
   standalone: true,
-  imports: [TableModule, NgFor, ToggleButtonModule, FormsModule],
+  imports: [TableModule, NgFor, ToggleButtonModule, FormsModule, ToggleSwitchModule],
   templateUrl: './planner.component.html',
   styleUrl: './planner.component.scss'
 })
@@ -60,7 +61,11 @@ export class PlannerComponent {
 
   ngAfterViewInit() {
     this.calculateCharWidth();
-    window.addEventListener('resize', () => this.calculateCharWidth());
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.calculateCharWidth();
   }
 
   loadCharactersAndCharacterRaids() {
