@@ -1,0 +1,8 @@
+::ng-deep .p-datatable-scrollable .p-datatable-frozen-column-left {
+    z-index: 2 !important;
+}
+
+.frozen {
+  width: 200px;
+  min-width: 200px;
+}

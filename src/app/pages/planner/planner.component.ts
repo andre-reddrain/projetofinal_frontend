@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -21,6 +21,12 @@ export class PlannerComponent {
   characters: any;
   raids: any;
   characterRaids: any;
+
+  // Table variables
+  @ViewChild('tableContainer') tableContainer!: ElementRef;
+  charWidth = 0;
+  frozenWidth = 200;
+  visibleCols = 6;
 
   constructor(
     private characterService: CharacterService,
@@ -50,6 +56,11 @@ export class PlannerComponent {
 
     // Load of Raids
     this.loadRaids();
+  }
+
+  ngAfterViewInit() {
+    this.calculateCharWidth();
+    window.addEventListener('resize', () => this.calculateCharWidth());
   }
 
   loadCharactersAndCharacterRaids() {
@@ -92,5 +103,10 @@ export class PlannerComponent {
     return this.characterRaids.find((cr: { raidId: string; characterId: string; }) =>
       cr.raidId === raidId && cr.characterId === characterId
     );
+  }
+
+  calculateCharWidth() {
+    const parentWidth = this.tableContainer.nativeElement.offsetWidth;
+    this.charWidth = (parentWidth - this.frozenWidth) / this.visibleCols;
   }
 }

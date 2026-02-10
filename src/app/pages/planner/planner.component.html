@@ -1,20 +1,21 @@
-<div style="max-width: 100%; overflow-x: auto;">
+<div #tableContainer class="overflow-x-auto w-full">
     <p-table
         [value]="raids"
         scrollable="true"
-        scrollHeight="flex"
-        [tableStyle]="{ 'min-width': 'fit-content' }"
-        styleClass="p-datatable-sm">
+        scrollHeight="100%"
+        [tableStyle]="{ width: '100%'}"
+        styleClass="p-datatable-sm flex-none">
 
         <!-- Header -->
         <ng-template pTemplate="header">
             <tr>
-                <th pFrozenColumn style="width: 16rem;">Raids</th>
+                <th pFrozenColumn class="frozen">Raids</th>
 
-                <th *ngFor="let char of characters" style="width: 16rem; text-align: center;">
+                <th *ngFor="let char of characters" class="flex-1 text-center text-nowrap overflow-hidden" [style.width.px]="charWidth" [style.min-width.px]="charWidth">
                     <div class="flex align-items-center justify-content-center gap-1">
                         <img [src]="char.characterClassIcon" width="24" height="24">
-                        {{ char.name }}
+                        <span>{{ char.name }}</span>
+                        <span class="text-sm text-gray-600">[{{ char.ilvl }}]</span>
                     </div>
                 </th>
             </tr>
@@ -23,14 +24,14 @@
         <!-- Body -->
         <ng-template pTemplate="body" let-raid>
             <tr>
-                <td pFrozenColumn style="width: 16rem;">
+                <td pFrozenColumn class="frozen">
                     <div class="flex align-items-center gap-2">
                         <img [src]="getRaidIcon(raid.type)" width="20" />
                         {{ raid.name }}
                     </div>
                 </td>
 
-                <td *ngFor="let char of characters" class="text-center" style="width: 8rem;">
+                <td *ngFor="let char of characters" class="flex-1 text-center text-nowrap overflow-hidden" [style.width.px]="charWidth" [style.min-width.px]="charWidth">
                     <p-toggle-button
                         [ngModel]="getCharacterRaid(raid.id, char.id)?.tracked"
                         (onChange)="onToggle(raid, char)">
