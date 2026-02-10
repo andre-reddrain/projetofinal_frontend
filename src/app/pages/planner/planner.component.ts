@@ -1,15 +1,19 @@
 import { Component } from '@angular/core';
+import { NgFor } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+
+import { TableModule } from 'primeng/table';
+import { ToggleButtonModule } from 'primeng/togglebutton';
+
+import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 import { CharacterService } from '../../services/character/character.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { RaidsService } from '../../services/raids/raids.service';
 
-import { TableModule } from 'primeng/table';
-import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
-
 @Component({
   selector: 'app-planner',
   standalone: true,
-  imports: [],
+  imports: [TableModule, NgFor, ToggleButtonModule, FormsModule],
   templateUrl: './planner.component.html',
   styleUrl: './planner.component.scss'
 })
@@ -33,9 +37,9 @@ export class PlannerComponent {
     'Kazeros Raid': 'assets/icons/kazeros_raid.webp'
   }
 
-  // getRaidIcon(grade: string): string {
-  //   return this.background[grade] || '';
-  // }
+  getRaidIcon(type: string): string {
+    return this.raidIcons[type] || '';
+  }
 
   ngOnInit() {
     const userId = this.authService.userId;
@@ -71,12 +75,22 @@ export class PlannerComponent {
   loadRaids() {
     this.raidService.getAllRaidsWithGates().subscribe({
       next: (data: any) => {
-        console.log(data);
+        // console.log(data);
         this.raids = data;
       },
       error: err => {
         console.error(err);
       }
     })
+  }
+
+  onToggle(raid: any, char: any) {
+    //todo
+  }
+
+  getCharacterRaid(raidId: string, characterId: string) {
+    return this.characterRaids.find((cr: { raidId: string; characterId: string; }) =>
+      cr.raidId === raidId && cr.characterId === characterId
+    );
   }
 }
