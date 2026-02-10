@@ -1,9 +1,12 @@
-<div>
-    <div class="flex flex-row">
+<!-- <div class="grid pt-2">
+    <div class="flex flex-row col-12 overflow-y-auto overflow-x-scroll">
         @for (character of characters; track $index) {
-            <div class="col-3">
-                <h1>{{ character.name }}</h1>
+            <div class="col-2">
+                <div class="flex align-items-center">
+                    <img [src]="character.characterClassIcon" width="32" height="32" class="mr-2">
+                    <h3>{{ character.name }}</h3>
+                </div>
             </div>
         }
     </div>
-</div>
+</div> -->
