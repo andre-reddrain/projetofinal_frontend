@@ -1,27 +1,34 @@
 import { Component, ElementRef, Host, HostListener, ViewChild } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TableModule } from 'primeng/table';
-import { ToggleButtonModule } from 'primeng/togglebutton';
-import { ToggleSwitchModule } from 'primeng/toggleswitch';
+import { ButtonModule } from 'primeng/button';
 
 import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 import { CharacterService } from '../../services/character/character.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { RaidsService } from '../../services/raids/raids.service';
 
+
 @Component({
   selector: 'app-planner',
   standalone: true,
-  imports: [TableModule, NgFor, ToggleButtonModule, FormsModule, ToggleSwitchModule],
+  imports: [TableModule, NgFor, FormsModule, ButtonModule, NgIf, NgClass],
   templateUrl: './planner.component.html',
   styleUrl: './planner.component.scss'
 })
 export class PlannerComponent {
+  // Database data
   characters: any;
   raids: any;
   characterRaids: any;
+
+  characterRaidLookup = new Map<string, any>();
+  characterRaidById = new Map<string, any>();
+  originalRaidById = new Map<string, any>();
+
+  changedToggles: { id: string; tracked: boolean }[] = [];
 
   // Table variables
   @ViewChild('tableContainer') tableContainer!: ElementRef;
@@ -68,6 +75,7 @@ export class PlannerComponent {
     this.calculateCharWidth();
   }
 
+  // Database functions
   loadCharactersAndCharacterRaids() {
     this.characterService.getCharactersOfUser().subscribe({
       next: (characters: any) => {
@@ -77,9 +85,9 @@ export class PlannerComponent {
         let characterIds = this.characters.map((c: { id: any; }) => c.id);
 
         this.characterRaidsService.getCharacterRaidsByCharacterIds(characterIds).subscribe({
-          next: raids => {
-            this.characterRaids = raids
-            console.log(raids)
+          next: charRaids => {
+            this.characterRaids = charRaids;
+            this.buildLookups();
           },
           error: err => console.error(err)
         })
@@ -89,7 +97,7 @@ export class PlannerComponent {
   }
 
   loadRaids() {
-    this.raidService.getAllRaidsWithGates().subscribe({
+    this.raidService.getAllRaids().subscribe({
       next: (data: any) => {
         // console.log(data);
         this.raids = data;
@@ -100,14 +108,61 @@ export class PlannerComponent {
     })
   }
 
-  onToggle(raid: any, char: any) {
-    //todo
+  onSave() {
+    if (this.changedToggles.length === 0) return;
+
+    console.log(this.changedToggles);
+    console.log("Vai atualizar!");
+  }
+
+  // UI functions
+  buildLookups() {
+    this.characterRaidLookup.clear();
+    this.characterRaidById.clear();
+    this.originalRaidById.clear();
+
+    this.characterRaids.forEach((cr: { id:string; raidId: string; characterId: string; }) => {
+      const key = this.makeKey(cr.raidId, cr.characterId);
+
+      this.characterRaidLookup.set(key, cr);
+      this.characterRaidById.set(cr.id, cr);
+      this.originalRaidById.set(cr.id, structuredClone(cr));
+    });
+  }
+
+  makeKey(raidId: string, characterId: string) {
+    return `${raidId}_${characterId}`;
+  }
+
+  onToggle(event: Event, id: string) {
+    const checked = (event.target as HTMLInputElement).checked;
+
+    const record = this.characterRaidById.get(id);
+    const original = this.originalRaidById.get(id);
+
+    if (!record || !original) return;
+
+    record.tracked = checked;
+
+    const index = this.changedToggles.findIndex(t => t.id === id);
+
+    if (checked !== original.tracked) {
+      if (index === -1) {
+        this.changedToggles.push({ id, tracked: checked });
+      } else {
+        this.changedToggles[index].tracked = checked;
+      }
+    } else if (index !== -1) {
+      this.changedToggles.splice(index, 1);
+    }
+  }
+
+  isChanged(id: string): boolean {
+    return this.changedToggles.some(t => t.id === id)
   }
 
   getCharacterRaid(raidId: string, characterId: string) {
-    return this.characterRaids.find((cr: { raidId: string; characterId: string; }) =>
-      cr.raidId === raidId && cr.characterId === characterId
-    );
+    return this.characterRaidLookup.get(this.makeKey(raidId, characterId));
   }
 
   calculateCharWidth() {
