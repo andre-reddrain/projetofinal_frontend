@@ -9,8 +9,14 @@ export class RaidsService {
 
   constructor(private http: HttpClient) { }
 
+  getAllRaids() {
+    const url = this.baseUrl + "/api/raids/all";
+
+    return this.http.get(url);
+  }
+
   getAllRaidsWithGates() {
-    const url = this.baseUrl + "/api/raids";
+    const url = this.baseUrl + "/api/raids/gates";
 
     return this.http.get(url);
   }
