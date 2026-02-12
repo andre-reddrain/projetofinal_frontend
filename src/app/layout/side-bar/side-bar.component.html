@@ -3,7 +3,9 @@
     <div *ngIf="!item.roles || item.roles.includes(authService.currentUser?.role ?? '')">
       <a
           [routerLink]="item.routerLink"
-          class="flex justify-content-between align-items-center w-full h-28 surface-card border-round cursor-pointer overflow-hidden hover:shadow-3 p-2 border-1 border-gray-300 item-link">
+          routerLinkActive="active-menu-item"
+          [routerLinkActiveOptions]="{ exact: true }"
+          class="flex justify-content-between align-items-center w-full h-28 border-round cursor-pointer overflow-hidden hover:shadow-2 p-2 border-1 border-gray-300 item-link">
 
           <!-- Left: text -->
           <div class="flex flex-column justify-content-center p-2 flex-1">
@@ -15,5 +17,4 @@
         </a>
     </div>
   </div>
-  
 </div>

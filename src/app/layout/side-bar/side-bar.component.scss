@@ -13,5 +13,10 @@
 }
 
 .item-link:hover {
-  background-color: rgba(211, 211, 211, 0.361) !important;
+    background: var(--p-button-secondary-hover-background) !important;
+}
+
+.sidebar-card a.active-menu-item {
+    background: var(--p-highlight-background) !important;
+    color: var(--p-highlight-color) !important;
 }
