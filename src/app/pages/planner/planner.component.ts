@@ -22,7 +22,7 @@ import { RaidsService } from '../../services/raids/raids.service';
 })
 export class PlannerComponent {
   // Database data
-  characters: any;
+  characters: any = [];
   raids: any;
   characterRaids: any;
 
@@ -78,6 +78,8 @@ export class PlannerComponent {
     this.characterService.getCharactersOfUser().subscribe({
       next: (characters: any) => {
         this.characters = characters;
+
+        if (this.characters.length === 0) return;
 
         // Load of Character Raids
         let characterIds = this.characters.map((c: { id: any; }) => c.id);
@@ -177,6 +179,7 @@ export class PlannerComponent {
   }
 
   calculateCharWidth() {
+    if (this.characters.length === 0) return;
     const parentWidth = this.tableContainer.nativeElement.offsetWidth;
     this.charWidth = (parentWidth - this.frozenWidth) / this.visibleCols;
   }
