@@ -70,11 +70,6 @@ export class PlannerComponent {
     this.calculateCharWidth();
   }
 
-  @HostListener('window:resize')
-  onResize() {
-    this.calculateCharWidth();
-  }
-
   // Database functions
   loadCharactersAndCharacterRaids() {
     this.characterService.getCharactersOfUser().subscribe({
@@ -168,5 +163,9 @@ export class PlannerComponent {
   calculateCharWidth() {
     const parentWidth = this.tableContainer.nativeElement.offsetWidth;
     this.charWidth = (parentWidth - this.frozenWidth) / this.visibleCols;
+  }
+
+  get limitedCharWidth() {
+    return Math.min(this.charWidth, 250);
   }
 }
