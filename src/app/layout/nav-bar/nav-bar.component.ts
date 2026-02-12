@@ -8,9 +8,9 @@ import { BadgeModule } from 'primeng/badge';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
 
-import { LoginComponent } from "../pages/login/login.component";
+import { LoginComponent } from "../../pages/login/login.component";
 
-import { AuthService } from '../services/auth/auth.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 
 @Component({

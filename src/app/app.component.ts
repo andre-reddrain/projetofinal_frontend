@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { NavBarComponent } from "./nav-bar/nav-bar.component";
-import { SideBarComponent } from './side-bar/side-bar.component';
+import { NavBarComponent } from "./layout/nav-bar/nav-bar.component";
+import { SideBarComponent } from './layout/side-bar/side-bar.component';
 import { AuthService } from './services/auth/auth.service';
 
 @Component({
