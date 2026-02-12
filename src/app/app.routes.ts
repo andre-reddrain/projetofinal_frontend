@@ -39,9 +39,9 @@ export const routes: Routes = [
         data: { roles: ['ADMIN'] }
     },
     {
-        path: 'planner',
+        path: 'raid-planner',
         loadComponent: () =>
-            import('./pages/planner/planner.component').then(m => m.PlannerComponent),
+            import('./pages/raid-planner/raid-planner.component').then(m => m.RaidPlannerComponent),
         canActivate: [authGuard],
         data: { roles: ['ADMIN', 'USER'] }
     }

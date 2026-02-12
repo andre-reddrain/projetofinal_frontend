@@ -17,14 +17,14 @@ import { RaidsService } from '../../services/raids/raids.service';
 
 
 @Component({
-  selector: 'app-planner',
+  selector: 'app-raid-planner',
   standalone: true,
   imports: [TableModule, NgFor, FormsModule, ButtonModule, NgIf, ToastModule, ProgressSpinner],
-  templateUrl: './planner.component.html',
-  styleUrl: './planner.component.scss',
+  templateUrl: './raid-planner.component.html',
+  styleUrl: './raid-planner.component.scss',
   providers: [MessageService]
 })
-export class PlannerComponent {
+export class RaidPlannerComponent {
   // Database data
   characters: any = [];
   raids: any;

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PlannerComponent } from './planner.component';
+import { RaidPlannerComponent } from './raid-planner.component';
 
-describe('PlannerComponent', () => {
-  let component: PlannerComponent;
-  let fixture: ComponentFixture<PlannerComponent>;
+describe('RaidPlannerComponent', () => {
+  let component: RaidPlannerComponent;
+  let fixture: ComponentFixture<RaidPlannerComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PlannerComponent]
+      imports: [RaidPlannerComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(PlannerComponent);
+    fixture = TestBed.createComponent(RaidPlannerComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

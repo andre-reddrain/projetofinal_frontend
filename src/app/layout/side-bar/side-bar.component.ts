@@ -27,8 +27,8 @@ export class SideBarComponent {
   ngOnInit() {
     this.items = [
       {
-        label: 'Tracker (Name WIP)',
-        icon: 'assets/icons/weekly.webp',
+        label: 'Checklist',
+        icon: 'assets/icons/check-box.png',
         routerLink: '/',
         roles: ['ADMIN', 'USER']
       },
@@ -54,18 +54,18 @@ export class SideBarComponent {
         routerLink: '/rewards',
         roles: ['ADMIN']
       },
-      // {
-      //   label: 'Character Classes', 
-      //   icon: 'assets/classes/assassin/deathblade.png', 
-      //   routerLink: '/character-classes',
-      //   roles: ['ADMIN']
-      // }
+      {
+        label: 'Raid Planner',
+        icon: 'assets/icons/boss.png',
+        routerLink: '/raid-planner',
+        roles: ['ADMIN', 'USER']
+      },
       {
         label: 'Gold Planner',
         icon: 'assets/type_rewards/universal/gold.png',
-        routerLink: '/planner',
+        routerLink: '/',
         roles: ['ADMIN', 'USER']
-      },
+      }
     ]
   }
 }
