@@ -55,8 +55,7 @@ export class CharactersComponent {
     // Load of CharacterClasses
     this.characterClassesService.getAllCharacterClasses().subscribe((data: any) => {
       this.characterClasses = data;
-      this.loading = false;
-
+      
       // Load of User's Characters
       this.listCharacters();
     })
@@ -75,9 +74,11 @@ export class CharactersComponent {
         }))
 
         this.characters = charactersData;
+        this.loading = false;
       },
       error: err => {
         console.error(err);
+        this.loading = false;
       }
     })
   }

@@ -207,7 +207,6 @@ export class PlannerComponent {
   }
 
   private completeRequest() {
-    console.log(this.pendingRequests);
     this.pendingRequests--;
     if (this.pendingRequests <= 0) {
       this.loading = false;
