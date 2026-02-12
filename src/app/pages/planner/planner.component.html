@@ -1,13 +1,18 @@
 <p-toast />
 <div class="flex flex-column h-full">
-    @if(characters.length === 0) {
+    <h1 class="flex-none mb-4">Gold Planner</h1>
+
+    @if (loading) {
+        <div class="flex-1 flex align-items-center justify-content-center">
+            <p-progress-spinner ariaLabel="loading" [style]="{ 'stroke': '#6366f1'}" />
+        </div>
+    }
+    @else if(characters.length === 0) {
         <div class="flex flex-1 align-items-center justify-content-center">
             <h1>No characters found!</h1>
         </div>
     }
     @else {
-        <h1 class="flex-none mb-4">Gold Planner</h1>
-
         <div #tableContainer class="flex-1 overflow-auto">
             <p-table
                 [value]="raids"

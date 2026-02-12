@@ -1,4 +1,5 @@
 <p-toast />
+
 <!-- Create character Form -->
 <app-character-form
     [(visible)]="visible"
@@ -6,20 +7,33 @@
     (responseMessage)="handleResponseMessage($event)">
 </app-character-form>
 
-<div class="flex align-items-center justify-content-between mt-2 mb-2">
-    <h1 class="m-0">Characters</h1>
-    <p-button icon="pi pi-plus" class="mr-2" [rounded]="true" (onClick)="showCharacterForm()" />
+<div class="flex flex-column h-full">
+    <!-- Header content -->
+    <div class="flex align-items-center justify-content-between mt-2 mb-2 flex-none">
+        <h1 class=" flex-none m-0">Characters</h1>
+        <p-button icon="pi pi-plus" class="mr-2" [rounded]="true" (onClick)="showCharacterForm()" />
+    </div>
+
+    <div class="flex-1 flex flex-column">
+        @if (loading) {
+            <div class="flex-1 flex align-items-center justify-content-center">
+                <p-progress-spinner ariaLabel="loading" [style]="{ 'stroke': '#6366f1'}" />
+            </div>
+        }
+        @else if (characters.length === 0) {
+            <div class="flex flex-1 align-items-center justify-content-center">
+                <h1>No characters found!</h1>
+            </div>
+        }
+        @else {
+            <!-- Character List + Edit Form -->
+            <app-character-list
+                *ngFor="let character of characters; trackBy: trackByCharacterId"
+                [character]="character"
+                [characterClasses]="characterClasses"
+                (responseMessage)="handleResponseMessage($event)"
+                (deleteCharacter)="deleteCharacter($event)">
+            </app-character-list>
+        }
+    </div>
 </div>
-
-<!-- Character List + Edit Form -->
-<app-character-list
-    *ngFor="let character of characters; trackBy: trackByCharacterId"
-    [character]="character"
-    [characterClasses]="characterClasses"
-    (responseMessage)="handleResponseMessage($event)"
-    (deleteCharacter)="deleteCharacter($event)">
-</app-character-list>
-
-<!-- <div class="block border-solid">
-    buh
-</div> -->

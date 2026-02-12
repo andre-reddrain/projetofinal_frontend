@@ -2,20 +2,24 @@ import { Component, ElementRef, ViewChild } from '@angular/core';
 import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+// PrimeNG
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
+import { ProgressSpinner } from 'primeng/progressspinner';
 
+// Services
 import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 import { CharacterService } from '../../services/character/character.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { RaidsService } from '../../services/raids/raids.service';
 
+
 @Component({
   selector: 'app-planner',
   standalone: true,
-  imports: [TableModule, NgFor, FormsModule, ButtonModule, NgIf, ToastModule],
+  imports: [TableModule, NgFor, FormsModule, ButtonModule, NgIf, ToastModule, ProgressSpinner],
   templateUrl: './planner.component.html',
   styleUrl: './planner.component.scss',
   providers: [MessageService]
@@ -37,6 +41,9 @@ export class PlannerComponent {
   charWidth = 0;
   frozenWidth = 200;
   visibleCols = 6;
+
+  loading = true;
+  pendingRequests = 2;
 
   constructor(
     private messageService: MessageService,
@@ -79,7 +86,10 @@ export class PlannerComponent {
       next: (characters: any) => {
         this.characters = characters;
 
-        if (this.characters.length === 0) return;
+        if (this.characters.length === 0) {
+          this.completeRequest();
+          return;
+        }
 
         // Load of Character Raids
         let characterIds = this.characters.map((c: { id: any; }) => c.id);
@@ -88,11 +98,18 @@ export class PlannerComponent {
           next: charRaids => {
             this.characterRaids = charRaids;
             this.buildLookups();
+            this.completeRequest();
           },
-          error: err => console.error(err)
+          error: err => {
+            console.error(err);
+            this.completeRequest();
+          }
         })
       },
-      error: err => console.error(err)
+      error: err => {
+        console.error(err);
+        this.completeRequest();
+      }
     });
   }
 
@@ -100,9 +117,11 @@ export class PlannerComponent {
     this.raidService.getAllRaids().subscribe({
       next: (data: any) => {
         this.raids = data;
+        this.completeRequest();
       },
       error: err => {
         console.error(err);
+        this.completeRequest();
       }
     })
   }
@@ -116,16 +135,15 @@ export class PlannerComponent {
 
         this.changedToggles = [];
         this.buildLookups();
+        this.completeRequest();
       },
       error: err => {
         console.error(err);
+        this.completeRequest();
 
         this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error updating settings!' });
-
       }
     })
-
-    console.log(this.changedToggles);
   }
 
   // UI functions
@@ -186,5 +204,13 @@ export class PlannerComponent {
 
   get limitedCharWidth() {
     return Math.min(this.charWidth, 250);
+  }
+
+  private completeRequest() {
+    console.log(this.pendingRequests);
+    this.pendingRequests--;
+    if (this.pendingRequests <= 0) {
+      this.loading = false;
+    }
   }
 }

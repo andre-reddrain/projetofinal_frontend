@@ -1,21 +1,28 @@
 import { Component } from '@angular/core';
-import { CharacterService } from '../../services/character/character.service';
-import { CharacterClassesService } from '../../services/character-classes/character-classes.service';
-import { AuthService } from '../../services/auth/auth.service';
-import { Toast } from "primeng/toast";
 import { NgFor } from '@angular/common';
-import { MessageService } from 'primeng/api';
+
+// PrimeNG
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { TextareaModule } from 'primeng/textarea';
+import { MessageService } from 'primeng/api';
+import { Toast } from "primeng/toast";
+import { ProgressSpinner } from 'primeng/progressspinner';
+
+// Components
 import { CharacterListComponent } from "./character-list/character-list.component";
 import { CharacterFormComponent } from "./character-form/character-form.component";
+
+// Services
+import { CharacterService } from '../../services/character/character.service';
+import { CharacterClassesService } from '../../services/character-classes/character-classes.service';
+import { AuthService } from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-characters',
   standalone: true,
-  imports: [TextareaModule, InputNumberModule, ButtonModule, FormsModule, Toast, CharacterListComponent, NgFor, CharacterFormComponent],
+  imports: [TextareaModule, InputNumberModule, ButtonModule, FormsModule, Toast, CharacterListComponent, NgFor, CharacterFormComponent, ProgressSpinner],
   templateUrl: './characters.component.html',
   styleUrl: './characters.component.scss',
   providers: [MessageService]
@@ -27,10 +34,11 @@ export class CharactersComponent {
   ilvl: number | null = null;
 
   characterClasses: any;
-  characters: any;
+  characters: any = [];
 
   selectedCharacterClass: any;
 
+  loading = true;
   visible: boolean = false;
 
   constructor(
@@ -47,6 +55,7 @@ export class CharactersComponent {
     // Load of CharacterClasses
     this.characterClassesService.getAllCharacterClasses().subscribe((data: any) => {
       this.characterClasses = data;
+      this.loading = false;
 
       // Load of User's Characters
       this.listCharacters();
