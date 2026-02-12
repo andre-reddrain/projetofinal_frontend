@@ -44,5 +44,12 @@ export const routes: Routes = [
             import('./pages/raid-planner/raid-planner.component').then(m => m.RaidPlannerComponent),
         canActivate: [authGuard],
         data: { roles: ['ADMIN', 'USER'] }
+    },
+    {
+        path: 'gold-planner',
+        loadComponent: () =>
+            import('./pages/gold-planner/gold-planner.component').then(m => m.GoldPlannerComponent),
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'USER'] }
     }
 ];
