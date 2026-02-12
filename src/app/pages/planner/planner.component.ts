@@ -1,22 +1,24 @@
-import { Component, ElementRef, Host, HostListener, ViewChild } from '@angular/core';
-import { NgClass, NgFor, NgIf } from '@angular/common';
+import { Component, ElementRef, ViewChild } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 import { CharacterService } from '../../services/character/character.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { RaidsService } from '../../services/raids/raids.service';
 
-
 @Component({
   selector: 'app-planner',
   standalone: true,
-  imports: [TableModule, NgFor, FormsModule, ButtonModule, NgIf, NgClass],
+  imports: [TableModule, NgFor, FormsModule, ButtonModule, NgIf, ToastModule],
   templateUrl: './planner.component.html',
-  styleUrl: './planner.component.scss'
+  styleUrl: './planner.component.scss',
+  providers: [MessageService]
 })
 export class PlannerComponent {
   // Database data
@@ -37,6 +39,7 @@ export class PlannerComponent {
   visibleCols = 6;
 
   constructor(
+    private messageService: MessageService,
     private characterService: CharacterService,
     private authService: AuthService,
     private raidService: RaidsService,
@@ -94,7 +97,6 @@ export class PlannerComponent {
   loadRaids() {
     this.raidService.getAllRaids().subscribe({
       next: (data: any) => {
-        // console.log(data);
         this.raids = data;
       },
       error: err => {
@@ -106,8 +108,22 @@ export class PlannerComponent {
   onSave() {
     if (this.changedToggles.length === 0) return;
 
+    this.characterRaidsService.updateCharacterRaids(this.changedToggles).subscribe({
+      next: () => {
+        this.messageService.add({severity: 'info', summary: 'Info', detail: 'Settings updated successfully!'});
+
+        this.changedToggles = [];
+        this.buildLookups();
+      },
+      error: err => {
+        console.error(err);
+
+        this.messageService.add({ severity: 'error', summary: 'Error', detail: 'Error updating settings!' });
+
+      }
+    })
+
     console.log(this.changedToggles);
-    console.log("Vai atualizar!");
   }
 
   // UI functions

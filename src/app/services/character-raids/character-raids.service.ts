@@ -20,4 +20,10 @@ export class CharacterRaidsService {
 
     return this.http.get<[]>(url, { params });
   }
+
+  updateCharacterRaids(charRaids: any) {
+    const url = this.baseUrl + "/api/character-raids/bulk";
+
+    return this.http.put(url, charRaids);
+  }
 }
