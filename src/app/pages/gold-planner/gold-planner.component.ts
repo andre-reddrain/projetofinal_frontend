@@ -4,6 +4,10 @@ import { Component } from '@angular/core';
 import { ProgressSpinner } from 'primeng/progressspinner';
 
 // Services
+import { GoldPlannerService } from '../../services/gold-planner/gold-planner.service';
+import { CharacterService } from '../../services/character/character.service';
+
+// Services
 
 @Component({
   selector: 'app-gold-planner',
@@ -17,6 +21,32 @@ export class GoldPlannerComponent {
   characters: any = [];
   
   loading = true;
+
+  constructor(
+    private characterService: CharacterService,
+    private goldPlannerService: GoldPlannerService
+  ) {}
+
+  ngOnInit() {
+     // Load Characters
+     this.loadCharacters();
+  }
+
+  loadCharacters() {
+    this.characterService.getCharactersOfUser().subscribe({
+      next: (characters: any) => {
+        this.characters = characters;
+
+        // Temp - testing the endpoint!
+        this.goldPlannerService.getGoldPlanner(characters[0].id).subscribe({
+          next: (data: any) => {
+            console.log(data);
+            // Works!
+          }
+        })
+      }
+    })
+  }
 
   /* Mental note
   Fazer isto tudo com um endpoint! (Excluindo characters!).
