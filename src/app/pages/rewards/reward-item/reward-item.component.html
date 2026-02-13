@@ -17,11 +17,11 @@
     </div>
     <div class="absolute bottom-0 right-0 bg-black bg-opacity-50 text-white text-xs px-1 py-0.5 rounded">
         <ng-container *ngIf="showExtraLabel; else normalAmount">
-            <span class="font-semibold">[Extra]</span> {{ reward.ammount }}
+            <span class="font-semibold">[Extra]</span> {{ reward.amount }}
         </ng-container>
 
         <ng-template #normalAmount>
-            {{ reward.ammount }}
+            {{ reward.amount }}
         </ng-template>
     </div>
 </div>

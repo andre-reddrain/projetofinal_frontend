@@ -59,7 +59,7 @@ export class RewardFormComponent {
 
     this.submitReward.emit({
       typeReward: this.selectedTypeReward,
-      ammount: this.quantity,
+      amount: this.quantity,
       isExtraReward: this.isExtraReward
     });
 

@@ -110,7 +110,7 @@ export class RewardsComponent {
     if (this.rewardsToInsert.length === 0) return;
 
     const payload = this.rewardsToInsert.map(r => ({
-      ammount: r.ammount,
+      amount: r.amount,
       isExtraReward: r.isExtraReward,
       gateDetailsId: r.gateDetailsId,
       typeRewardId: r.typeRewardId
