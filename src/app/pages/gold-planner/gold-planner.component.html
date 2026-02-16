@@ -13,5 +13,79 @@
     }
     @else {
         <!-- Content here! -->
+         <div #tableContainer class="flex-1 overflow-auto">
+            <p-table
+                [value]="raids"
+                scrollable="true"
+                scrollHeight="flex"
+                showGridLines
+                dataKey="id"
+                [expandedRowKeys]="expandedRows"
+                [tableStyle]="{ width: '100%'}"
+                styleClass="p-datatable-sm flex-none">
+
+                <!-- Caption -->
+                <!-- <ng-template #caption>
+                    <div class="flex flex-wrap justify-end gap-2">
+                        <p-button label="Expand All" icon="pi pi-plus" text (onClick)="expandAll()" />
+                        <p-button label="Collapse All" icon="pi pi-minus" text (onClick)="collapseAll()" />
+                    </div>
+                </ng-template> -->
+
+                <!-- Header -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pFrozenColumn class="frozen">Raids</th>
+
+                        <th
+                            *ngFor="let char of characters"
+                            class="text-center text-nowrap overflow-hidden"
+                            [style.mid-width.px]="100">
+
+                            <div class="flex align-items-center justify-content-center gap-1">
+                                <img [src]="char.characterClassIcon" width="24" height="24">
+                                <span>{{ char.name }}</span>
+                                <span class="text-sm text-gray-600">[{{ char.ilvl }}]</span>
+                            </div>
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <!-- Body -->
+                <ng-template pTemplate="body" let-raid let-expanded="expanded">
+                    <tr>
+                        <td pFrozenColumn class="frozen">
+                            <div class="flex align-items-center gap-2">
+                                <img [src]="getRaidIcon(raid.type)" width="20" />
+                                {{ raid.name }}
+                                <p-button type="button" pRipple [pRowToggler]="raid" [text]="true" [rounded]="true" [plain]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+                            </div>
+                        </td>
+
+                        <td
+                            *ngFor="let char of characters"
+                            class="text-center text-nowrap"
+                            [style.min-width.px]="200">
+                            <span>BUH</span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <!-- Body - Expanded -->
+                <ng-template #expandedrow let-raid>
+                    <ng-container *ngFor="let gate of raid.gates">
+                        <tr>
+                            <!-- Make this row span all character columns + raid column -->
+                            <td [attr.colspan]="characters.length + 1" class="p-2">
+                                <div class="flex align-items-center gap-2">
+                                    <img [src]="getRaidIcon(raid.type)" width="20" />
+                                    <strong>[Gate {{ gate.number }}]</strong> – {{ gate.name }}
+                                </div>
+                            </td>
+                        </tr>
+                    </ng-container>
+                </ng-template>
+            </p-table>
+        </div>
     }
 </div>

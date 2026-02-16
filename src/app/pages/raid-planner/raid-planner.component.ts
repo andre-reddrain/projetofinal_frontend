@@ -53,7 +53,7 @@ export class RaidPlannerComponent {
     private characterRaidsService: CharacterRaidsService
   ) {}
 
-    private raidIcons: Record<string, string> = {
+  private raidIcons: Record<string, string> = {
     'Abyss Raid': 'assets/icons/abyssal-raid.webp',
     'Legion Raid': 'assets/icons/legion_raid.png',
     'Abyssal Dungeon': 'assets/icons/abyssal-dungeon.webp',

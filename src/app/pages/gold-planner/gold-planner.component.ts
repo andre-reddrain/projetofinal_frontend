@@ -1,31 +1,47 @@
 import { Component } from '@angular/core';
+import { NgFor, NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 // PrimeNG
 import { ProgressSpinner } from 'primeng/progressspinner';
+import { TableModule } from 'primeng/table';
+import { ButtonModule } from 'primeng/button';
 
 // Services
 import { GoldPlannerService } from '../../services/gold-planner/gold-planner.service';
 import { CharacterService } from '../../services/character/character.service';
 
-// Services
-
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
-  imports: [ProgressSpinner],
+  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, NgIf, ButtonModule],
   templateUrl: './gold-planner.component.html',
   styleUrl: './gold-planner.component.scss'
 })
 export class GoldPlannerComponent {
   // Database data
   characters: any = [];
+  raids: any = [];
   
-  loading = true;
+  loading = false;
+  expandedRows = {};
 
   constructor(
     private characterService: CharacterService,
     private goldPlannerService: GoldPlannerService
   ) {}
+
+  private raidIcons: Record<string, string> = {
+    'Abyss Raid': 'assets/icons/abyssal-raid.webp',
+    'Legion Raid': 'assets/icons/legion_raid.png',
+    'Abyssal Dungeon': 'assets/icons/abyssal-dungeon.webp',
+    'Epic Raid': 'assets/icons/dungeon.webp',
+    'Kazeros Raid': 'assets/icons/kazeros_raid.webp'
+  }
+
+  getRaidIcon(type: string): string {
+    return this.raidIcons[type] || '';
+  }
 
   ngOnInit() {
      // Load Characters
@@ -40,51 +56,17 @@ export class GoldPlannerComponent {
         // Temp - testing the endpoint!
         this.goldPlannerService.getGoldPlanner(characters[0].id).subscribe({
           next: (data: any) => {
-            console.log(data);
-            // Works!
+            this.raids = data.raids;
+
+            // Order gates by number
+            this.raids.forEach((raid: { gates: any[]; }) => {
+                raid.gates.sort((a, b) => a.number - b.number);
+            });
+
+            console.log(this.raids);
           }
         })
       }
     })
   }
-
-  /* Mental note
-  Fazer isto tudo com um endpoint! (Excluindo characters!).
-  Necessário recolher Characters - Mesma coisa que raid-planner
-  Necessário recolher raids - Mesma coisa que raid-planner, mas:
-    - Vai conter uma dropdown (RowExpansion), que vai conter os gates
-  Necessário recolher gates - Vão complementar raids
-  Necessário recolher gate_details - Contêm difficulty, extraLoot e entry_lvl:
-    - Organizá-los por gate_id
-      - Organizá-los por difficulty
-  Necessário recolher rewards -> Só Gold e Bound Gold!
-  Necessário recolher typeRewards -> Só Gold e Bound Gold!
-
-  Isto vai ser o tipo de resposta que o endpoint vai (possivelmente) dar:
-  [
-    {
-      "raidId": "...",
-      "raidName": "Brelshaza",
-      "raidIcon": "...",
-      "gates": [
-        {
-          "gateId": "...",
-          "gateNumber": 1,
-          "difficulties": [
-            {
-              "difficulty": "Normal",
-              "entryLevel": 1490,
-              "cost": 500,
-              "rewards": [
-                { "type": "Gold", "amount": 1500 },
-                { "type": "Leapstone", "amount": 12 }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-
-  */
 }
