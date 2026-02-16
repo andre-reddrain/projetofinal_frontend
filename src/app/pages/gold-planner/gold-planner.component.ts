@@ -10,11 +10,12 @@ import { ButtonModule } from 'primeng/button';
 // Services
 import { GoldPlannerService } from '../../services/gold-planner/gold-planner.service';
 import { CharacterService } from '../../services/character/character.service';
+import { TooltipModule } from "primeng/tooltip";
 
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, NgIf, ButtonModule],
+  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, NgIf, ButtonModule, TooltipModule],
   templateUrl: './gold-planner.component.html',
   styleUrl: './gold-planner.component.scss'
 })
@@ -39,6 +40,17 @@ export class GoldPlannerComponent {
     'Kazeros Raid': 'assets/icons/kazeros_raid.webp'
   }
 
+  private difficultyOrder: Record<string, number> = {
+    'Solo': 1,
+    'Normal': 2,
+    'Hard': 3
+  };
+
+  private rewardOrder: Record<string, number> = {
+    'Gold': 1,
+    'Bound Gold': 2
+  }
+
   getRaidIcon(type: string): string {
     return this.raidIcons[type] || '';
   }
@@ -61,12 +73,48 @@ export class GoldPlannerComponent {
             // Order gates by number
             this.raids.forEach((raid: { gates: any[]; }) => {
                 raid.gates.sort((a, b) => a.number - b.number);
-            });
 
+                raid.gates.forEach((gate: any) => {
+                  // Sort difficulties
+                  gate.details = this.organizeDifficulties(gate.details);
+
+                  gate.details.forEach((details: any) => {
+                    // Sort rewards
+                    details.rewards = this.organizeRewards(details.rewards);
+                  })
+                })
+            });
             console.log(this.raids);
           }
         })
       }
+    })
+  }
+
+  getGateDetailsForCharacter(gate: any, characterId: string) {
+    // Each gate has gateDetails
+    // Each gateDetail has progress for each character
+    return gate.gateDetails
+      .filter((d: { progress: { characterId: string; }; }) => d.progress?.characterId === characterId)
+      .sort((a: { entryLvl: number; }, b: { entryLvl: number; }) => {
+        // Optional: sort by difficulty or entryLvl
+        return a.entryLvl - b.entryLvl;
+    });
+  }
+
+  organizeDifficulties(difficulties: any[]): any[] {
+    return difficulties.slice().sort((a, b) => {
+      const aOrder = this.difficultyOrder[a.difficulty] || 99;
+      const bOrder = this.difficultyOrder[b.difficulty] || 99;
+      return aOrder - bOrder;
+    });
+  }
+
+  organizeRewards(rewards: any[]): any[] {
+    return rewards.slice().sort((a, b) => {
+      const aOrder = this.rewardOrder[a.type] || 99;
+      const bOrder = this.rewardOrder[b.type] || 99;
+      return aOrder - bOrder;
     })
   }
 }
