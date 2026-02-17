@@ -11,6 +11,7 @@ import { ButtonModule } from 'primeng/button';
 import { GoldPlannerService } from '../../services/gold-planner/gold-planner.service';
 import { CharacterService } from '../../services/character/character.service';
 import { TooltipModule } from "primeng/tooltip";
+import { CharacterGateProgressService } from '../../services/character-gate-progress/character-gate-progress.service';
 
 @Component({
   selector: 'app-gold-planner',
@@ -23,15 +24,20 @@ export class GoldPlannerComponent {
   // Database data
   characters: any = [];
   raids: any = [];
-  
-  loading = false;
+  gateProgress: any = [];
+
+  // Table variables
   expandedRows = {};
+  
+  loading = true;
+  pendingRequests = 2;
 
   goldIcon = "assets/type_rewards/universal/gold.png";
 
   constructor(
     private characterService: CharacterService,
-    private goldPlannerService: GoldPlannerService
+    private goldPlannerService: GoldPlannerService,
+    private gateProgressService: CharacterGateProgressService
   ) {}
 
   private raidIcons: Record<string, string> = {
@@ -59,36 +65,69 @@ export class GoldPlannerComponent {
 
   ngOnInit() {
      // Load Characters
-     this.loadCharacters();
+     this.loadCharactersAndGateProgress();
+
+     // Load Gold Planner Data
+     this.loadGoldPlanner();
   }
 
-  loadCharacters() {
+  loadCharactersAndGateProgress() {
     this.characterService.getCharactersOfUser().subscribe({
       next: (characters: any) => {
         this.characters = characters;
 
-        // Temp - testing the endpoint!
-        this.goldPlannerService.getGoldPlanner(characters[0].id).subscribe({
-          next: (data: any) => {
-            this.raids = data.raids;
+        if (this.characters.length === 0) {
+          this.completeRequest();
+          return;
+        }
 
-            // Order gates by number
-            this.raids.forEach((raid: { gates: any[]; }) => {
-                raid.gates.sort((a, b) => a.number - b.number);
+        // Collect Character Gate Progress
+        let characterIds = this.characters.map((c: { id: any; }) => c.id);
 
-                raid.gates.forEach((gate: any) => {
-                  // Sort difficulties
-                  gate.details = this.organizeDifficulties(gate.details);
-
-                  gate.details.forEach((details: any) => {
-                    // Sort rewards
-                    details.rewards = this.organizeRewards(details.rewards);
-                  })
-                })
-            });
-            console.log(this.raids);
+        this.gateProgressService.getCharacterGateProgressByCharacterIds(characterIds).subscribe({
+          next: gateProgress => {
+            this.gateProgress = gateProgress;
+            console.log(gateProgress);
+            this.completeRequest();
+          },
+          error: err => {
+            console.error(err);
+            this.completeRequest();
           }
         })
+      },
+      error: err => {
+        console.error(err);
+        this.completeRequest();
+      }
+    })
+  }
+
+  loadGoldPlanner() {
+    this.goldPlannerService.getGoldPlanner().subscribe({
+      next: (data: any) => {
+        this.raids = data.raids;
+
+        // Order gates by number
+        this.raids.forEach((raid: { gates: any[]; }) => {
+            raid.gates.sort((a, b) => a.number - b.number);
+
+            raid.gates.forEach((gate: any) => {
+              // Sort difficulties
+              gate.details = this.organizeDifficulties(gate.details);
+
+              gate.details.forEach((details: any) => {
+                // Sort rewards
+                details.rewards = this.organizeRewards(details.rewards);
+              })
+            })
+        });
+        console.log(this.raids);
+        this.completeRequest();
+      },
+      error: err => {
+        console.error(err);
+        this.completeRequest();
       }
     })
   }
@@ -148,5 +187,12 @@ export class GoldPlannerComponent {
 
     if (gold) return `Unbound Gold: ${gold}`;
     return `Bound Gold: ${bound}`;
+  }
+
+  private completeRequest() {
+    this.pendingRequests--;
+    if (this.pendingRequests <= 0) {
+      this.loading = false;
+    }
   }
 }

@@ -9,8 +9,8 @@ export class GoldPlannerService {
 
   constructor(private http: HttpClient) { }
 
-  getGoldPlanner(characterId: string) {
-    const url = this.baseUrl + "/api/gold-planner?characterId=" + characterId;
+  getGoldPlanner() {
+    const url = this.baseUrl + "/api/gold-planner";
 
     return this.http.get<[]>(url);
   }
