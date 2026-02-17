@@ -15,7 +15,7 @@ import { TooltipModule } from "primeng/tooltip";
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, NgIf, ButtonModule, TooltipModule],
+  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, TooltipModule],
   templateUrl: './gold-planner.component.html',
   styleUrl: './gold-planner.component.scss'
 })
@@ -26,6 +26,8 @@ export class GoldPlannerComponent {
   
   loading = false;
   expandedRows = {};
+
+  goldIcon = "assets/type_rewards/universal/gold.png";
 
   constructor(
     private characterService: CharacterService,
@@ -116,5 +118,35 @@ export class GoldPlannerComponent {
       const bOrder = this.rewardOrder[b.type] || 99;
       return aOrder - bOrder;
     })
+  }
+
+  getGold(diff: any): number {
+    return diff.rewards
+      ?.filter((r: any) => r.type === 'Gold')
+      .reduce((sum: number, r: any) => sum + r.amount, 0) ?? 0;
+  }
+
+  getBoundGold(diff: any): number {
+    return diff.rewards
+      ?.filter((r: any) => r.type === 'Bound Gold')
+      .reduce((sum: number, r: any) => sum + r.amount, 0) ?? 0;
+  }
+
+  getTotalGold(diff: any): number {
+    return this.getGold(diff) + this.getBoundGold(diff);
+  }
+
+  formatGoldTooltip(diff: any): string {
+    const gold = this.getGold(diff);
+    const bound = this.getBoundGold(diff);
+
+    if (!gold && !bound) return 'No gold reward';
+
+    if (gold && bound) {
+      return `Unbound Gold: ${gold}\nBound Gold: ${bound}`;
+    }
+
+    if (gold) return `Unbound Gold: ${gold}`;
+    return `Bound Gold: ${bound}`;
   }
 }

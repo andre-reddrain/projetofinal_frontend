@@ -17,7 +17,7 @@
                 [value]="raids"
                 scrollable="true"
                 scrollHeight="flex"
-                showGridLines
+                showGridlines
                 dataKey="id"
                 [expandedRowKeys]="expandedRows"
                 [tableStyle]="{ width: '100%'}"
@@ -87,12 +87,22 @@
                             <div class="flex gap-2 justify-content-center">
                            
                                 <div *ngFor="let diff of gate.details" class="flex flex-column gap-1 border-round p-1" style="min-width: 80px;">
-                                    @if(char.ilvl >= diff.entryLvl) {
-                                        <strong>{{ diff.difficulty }}</strong>
+                                    @if(char.ilvl >= diff.entryLvl && diff.difficulty == "Normal") {
+                                        <button>{{ diff.difficulty }}</button>
                                         <div class="flex flex-column gap-1">
-                                            <div *ngFor="let reward of diff.rewards">
+                                            <!-- <div *ngFor="let reward of diff.rewards">
                                                 <img pTooltip="{{ reward.type }}" tooltipPosition="top" [src]="reward.icon" width="20" />
                                                 {{ reward.amount }}
+                                            </div> -->
+                                            <div>
+                                                <input type="checkbox">
+                                                <span pTooltip="{{formatGoldTooltip(diff)}}">
+                                                    Gold: <img [src]="goldIcon" width="20" /> {{ getTotalGold(diff) }}
+                                                </span>
+                                            </div>
+                                            <div>
+                                                <input type="checkbox">
+                                                Extra cost: <img [src]="goldIcon" width="20" /> {{ diff.extralootCost }}
                                             </div>
                                         </div>
                                     }
