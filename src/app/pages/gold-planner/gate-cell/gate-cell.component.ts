@@ -2,6 +2,12 @@ import { NgClass, NgFor } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Tooltip } from "primeng/tooltip";
 
+type GateUIState = {
+  selectedDifficulty: string | null;
+  takingGold: boolean;
+  buyExtraLoot: boolean;
+}
+
 @Component({
   selector: 'app-gate-cell',
   standalone: true,
@@ -12,21 +18,36 @@ import { Tooltip } from "primeng/tooltip";
 export class GateCellComponent {
   @Input() gate!: any;
   @Input() character!: any;
-  @Input() selectedDifficulty: string | null = null;
-
-  @Output() difficultyChange = new EventEmitter<string>();
+  @Input() state!: GateUIState;
 
   goldIcon = "assets/type_rewards/universal/gold.png";
 
+  @Output() difficultyChange = new EventEmitter<string>();
+  @Output() takingGoldChange = new EventEmitter<boolean>();
+  @Output() buyExtraLootChange = new EventEmitter<boolean>();
+
+  // Output events
   selectDifficulty(diff: string) {
     this.difficultyChange.emit(diff);
   }
 
-  get activeDetails() {
-    if (!this.selectedDifficulty) return null;
-    return this.gate.details.find((d: { difficulty: string | null; }) => d.difficulty === this.selectedDifficulty);
+  onTakingGoldChange(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.takingGoldChange.emit(checked);
   }
 
+  onBuyExtraLootChange(event: Event) {
+    const checked = (event.target as HTMLInputElement).checked;
+    this.buyExtraLootChange.emit(checked);
+  }
+
+  get activeDetails() {
+    const selected = this.state?.selectedDifficulty;
+    if (!selected) return null;
+    return this.gate.details.find((d: { difficulty: string | null; }) => d.difficulty === selected) ?? null;
+  }
+
+  // Gold Tooltip UI helpers
   getGold(diff: any): number {
     return diff.rewards
       ?.filter((r: any) => r.type === 'Gold')

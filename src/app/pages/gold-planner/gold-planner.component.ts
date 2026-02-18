@@ -14,6 +14,15 @@ import { TooltipModule } from "primeng/tooltip";
 import { CharacterGateProgressService } from '../../services/character-gate-progress/character-gate-progress.service';
 import { GateCellComponent } from "./gate-cell/gate-cell.component";
 
+/**
+ * Contains the UI element values of the <td> of the expanded rows
+ */
+type GateUIState = {
+  selectedDifficulty: string | null;
+  takingGold: boolean;
+  buyExtraLoot: boolean;
+};
+
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
@@ -35,6 +44,8 @@ export class GoldPlannerComponent {
    * Keeps selected difficulties after row collapse
    */
   selectedDifficultyMap = new Map<string, string>();
+
+  gateStateMap = new Map<string, GateUIState>();
 
   // Table variables
   expandedRows = {};
@@ -206,6 +217,45 @@ export class GoldPlannerComponent {
 
   setSelectedDifficulty(gateId: string, characterId: string, diff: string) {
     this.selectedDifficultyMap.set(this.makeDifficultyKey(gateId, characterId), diff);
+  }
+
+  // gateStateMap functions
+  makeGateKey(gateId: string, characterId: string) {
+    return `${gateId}_${characterId}`;
+  }
+
+  getGateState(gateId: string, characterId: string): GateUIState {
+    const key = this.makeGateKey(gateId, characterId);
+
+    if (!this.gateStateMap.has(key)) {
+      this.gateStateMap.set(key, {
+        selectedDifficulty: null,
+        takingGold: false,
+        buyExtraLoot: false
+      });
+    }
+
+    return this.gateStateMap.get(key)!;
+  }
+
+  // gateStateMap helper functions
+  setDifficulty(gateId: string, characterId: string, difficulty: string) {
+    const state = this.getGateState(gateId, characterId);
+
+    state.selectedDifficulty = difficulty;
+
+    // Reset toggles
+    state.takingGold = false;
+    state.buyExtraLoot = false;
+  }
+
+  setTakingGold(gateId: string, characterId: string, value: boolean) {
+    console.log(value);
+    this.getGateState(gateId, characterId).takingGold = value;
+  }
+
+  setBuyExtraLoot(gateId: string, characterId: string, value: boolean) {
+    this.getGateState(gateId, characterId).buyExtraLoot = value;;
   }
 
   // Loading functions

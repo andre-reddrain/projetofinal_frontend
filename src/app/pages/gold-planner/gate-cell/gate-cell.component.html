@@ -3,7 +3,7 @@
         *ngFor="let diff of gate.details"
         (click)="selectDifficulty(diff.difficulty)"
         class="px-2 py-1 border-1 border-round text-sm transition-colors transition-duration-150"
-        [ngClass]="selectedDifficulty === diff.difficulty
+        [ngClass]="state.selectedDifficulty === diff.difficulty
             ? 'bg-primary text-primary-reverse border-primary'
             : 'bg-secondary hover:surface-100'"
     >
@@ -12,14 +12,27 @@
 </div>
 @let active = activeDetails;
 
-<div>
-    <input type="checkbox" [disabled]="!active">
-    <span [pTooltip]="active ? formatGoldTooltip(active) : 'No gold reward'">
-        Gold: <img [src]="goldIcon" width="20" /> {{ active ? getTotalGold(active) : 0 }}
-    </span>
-</div>
+<div class="flex flex-column gap-1">
+    <!-- Taking Gold -->
+    <div class="flex align-items-center gap-2">
+        <input 
+            type="checkbox"
+            [disabled]="!active"
+            [checked]="state.takingGold"
+            (change)="onTakingGoldChange($event)" />
+        <span [pTooltip]="active ? formatGoldTooltip(active) : 'No gold reward'">
+            Gold: <img [src]="goldIcon" width="20" /> {{ active ? getTotalGold(active) : 0 }}
+        </span>
+    </div>
 
-<div>
-    <input type="checkbox" [disabled]="!active">
-    Extra cost: <img [src]="goldIcon" width="20" /> {{ active ? active.extralootCost : 0 }}
+    <!-- Buy Extra Loot -->
+    <div class="flex align-items-center gap-2">
+        <input
+        type="checkbox"
+        [disabled]="!active"
+        [checked]="state.buyExtraLoot"
+        (change)="onBuyExtraLootChange($event)" />
+        <span>
+            Extra cost: <img [src]="goldIcon" width="20" /> {{ active ? active.extralootCost : 0 }}
+        </span>
 </div>

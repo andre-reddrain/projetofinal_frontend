@@ -86,8 +86,10 @@
                             <app-gate-cell
                                 [gate]="gate"
                                 [character]="char"
-                                [selectedDifficulty]="getSelectedDifficulty(gate.id, char.id)"
-                                (difficultyChange)="setSelectedDifficulty(gate.id, char.id, $event)">
+                                [state]="getGateState(gate.id, char.id)"
+                                (difficultyChange)="setDifficulty(gate.id, char.id, $event)"
+                                (takingGoldChange)="setTakingGold(gate.id, char.id, $event)"
+                                (buyExtraLootChange)="setBuyExtraLoot(gate.id, char.id, $event)">
                             </app-gate-cell>                           
                         </td>
                     </tr>
