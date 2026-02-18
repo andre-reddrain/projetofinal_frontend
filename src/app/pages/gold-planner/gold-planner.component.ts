@@ -12,11 +12,12 @@ import { GoldPlannerService } from '../../services/gold-planner/gold-planner.ser
 import { CharacterService } from '../../services/character/character.service';
 import { TooltipModule } from "primeng/tooltip";
 import { CharacterGateProgressService } from '../../services/character-gate-progress/character-gate-progress.service';
+import { GateCellComponent } from "./gate-cell/gate-cell.component";
 
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, TooltipModule],
+  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, TooltipModule, GateCellComponent],
   templateUrl: './gold-planner.component.html',
   styleUrl: './gold-planner.component.scss'
 })
@@ -26,13 +27,15 @@ export class GoldPlannerComponent {
   raids: any = [];
   gateProgress: any = [];
 
+  progressLookup = new Map<string, any>();
+  progressById = new Map<string, any>();
+  originalProgressById = new Map<string, any>();
+
   // Table variables
   expandedRows = {};
   
   loading = true;
-  pendingRequests = 2;
-
-  goldIcon = "assets/type_rewards/universal/gold.png";
+  pendingRequests = 2;  
 
   constructor(
     private characterService: CharacterService,
@@ -71,6 +74,7 @@ export class GoldPlannerComponent {
      this.loadGoldPlanner();
   }
 
+  // Database functions
   loadCharactersAndGateProgress() {
     this.characterService.getCharactersOfUser().subscribe({
       next: (characters: any) => {
@@ -159,34 +163,27 @@ export class GoldPlannerComponent {
     })
   }
 
-  getGold(diff: any): number {
-    return diff.rewards
-      ?.filter((r: any) => r.type === 'Gold')
-      .reduce((sum: number, r: any) => sum + r.amount, 0) ?? 0;
+  // UI functions
+  buildLookups() {
+    this.progressLookup.clear();
+    this.progressById.clear();
+    this.originalProgressById.clear();
+
+    this.gateProgress.forEach((p: any) => {
+      const key = this.makeKey(p.gateDetailsId, p.characterId);
+
+      this.progressLookup.set(key, p);
+      this.progressById.set(p.id, p);
+      this.originalProgressById.set(p.id, structuredClone(p))
+    })
   }
 
-  getBoundGold(diff: any): number {
-    return diff.rewards
-      ?.filter((r: any) => r.type === 'Bound Gold')
-      .reduce((sum: number, r: any) => sum + r.amount, 0) ?? 0;
+  makeKey(gateDetailsId: string, characterId: string) {
+    return `${gateDetailsId}_${characterId}`;
   }
 
-  getTotalGold(diff: any): number {
-    return this.getGold(diff) + this.getBoundGold(diff);
-  }
-
-  formatGoldTooltip(diff: any): string {
-    const gold = this.getGold(diff);
-    const bound = this.getBoundGold(diff);
-
-    if (!gold && !bound) return 'No gold reward';
-
-    if (gold && bound) {
-      return `Unbound Gold: ${gold}\nBound Gold: ${bound}`;
-    }
-
-    if (gold) return `Unbound Gold: ${gold}`;
-    return `Bound Gold: ${bound}`;
+  getProgress(detailsId: string, characterId: string) {
+    return this.progressLookup.get(this.makeKey(detailsId, characterId));
   }
 
   private completeRequest() {

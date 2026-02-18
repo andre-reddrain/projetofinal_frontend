@@ -15,7 +15,6 @@ import { CharacterService } from '../../services/character/character.service';
 import { AuthService } from '../../services/auth/auth.service';
 import { RaidsService } from '../../services/raids/raids.service';
 
-
 @Component({
   selector: 'app-raid-planner',
   standalone: true,

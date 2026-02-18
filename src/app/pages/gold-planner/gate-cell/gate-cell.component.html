@@ -1,0 +1,25 @@
+<div class="flex gap-1 justify-content-center mb-2">
+    <button
+        *ngFor="let diff of gate.details"
+        (click)="selectDifficulty(diff.difficulty)"
+        class="px-2 py-1 border-1 border-round text-sm transition-colors transition-duration-150"
+        [ngClass]="selectedDifficulty === diff.difficulty
+            ? 'bg-primary text-primary-reverse border-primary'
+            : 'bg-secondary hover:surface-100'"
+    >
+        {{ diff.difficulty }}
+    </button>
+</div>
+@let active = activeDetails;
+
+<div>
+    <input type="checkbox" [disabled]="!active">
+    <span [pTooltip]="active ? formatGoldTooltip(active) : 'No gold reward'">
+        Gold: <img [src]="goldIcon" width="20" /> {{ active ? getTotalGold(active) : 0 }}
+    </span>
+</div>
+
+<div>
+    <input type="checkbox" [disabled]="!active">
+    Extra cost: <img [src]="goldIcon" width="20" /> {{ active ? active.extralootCost : 0 }}
+</div>
