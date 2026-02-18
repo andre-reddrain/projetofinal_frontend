@@ -29,7 +29,7 @@ export class SideBarComponent {
       {
         label: 'Checklist',
         icon: 'assets/icons/check-box.png',
-        routerLink: '/',
+        routerLink: '/checklist',
         roles: ['ADMIN', 'USER']
       },
       {

@@ -8,6 +8,13 @@ export const routes: Routes = [
             import('./pages/home/home.component').then(m => m.HomeComponent)
     },
     {
+        path: 'checklist',
+        loadComponent: () => 
+            import('./pages/checklist/checklist.component').then(m => m.ChecklistComponent),
+        canActivate: [authGuard],
+        data: { roles: ['ADMIN', 'USER'] }
+    },
+    {
         path: 'characters',
         loadComponent: () =>
             import('./pages/characters/characters.component').then(m => m.CharactersComponent),
