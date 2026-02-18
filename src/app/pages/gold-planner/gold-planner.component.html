@@ -68,7 +68,7 @@
                     <tr *ngFor="let gate of raid.gates">
                     
                         <!-- Gate info -->
-                        <td class="p-1">
+                        <td pFrozenColumn class="frozen p-1">
                             <div class="flex align-items-center gap-2 ml-6">
                                 <img [src]="getRaidIcon(raid.type)" width="20" />
                                 <strong class="white-space-nowrap">
@@ -86,11 +86,9 @@
                             <app-gate-cell
                                 [gate]="gate"
                                 [character]="char"
-                                [progress]="getProgress(gate.id, char.id)">
-                            </app-gate-cell>
-
-                            <!-- Gate Details -->
-                            
+                                [selectedDifficulty]="getSelectedDifficulty(gate.id, char.id)"
+                                (difficultyChange)="setSelectedDifficulty(gate.id, char.id, $event)">
+                            </app-gate-cell>                           
                         </td>
                     </tr>
                 </ng-template>

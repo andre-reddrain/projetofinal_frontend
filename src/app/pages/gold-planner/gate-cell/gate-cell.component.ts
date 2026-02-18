@@ -1,5 +1,5 @@
 import { NgClass, NgFor } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Tooltip } from "primeng/tooltip";
 
 @Component({
@@ -12,14 +12,14 @@ import { Tooltip } from "primeng/tooltip";
 export class GateCellComponent {
   @Input() gate!: any;
   @Input() character!: any;
-  @Input() progress!: any | null;
+  @Input() selectedDifficulty: string | null = null;
 
-  selectedDifficulty: string | null = null;
+  @Output() difficultyChange = new EventEmitter<string>();
 
   goldIcon = "assets/type_rewards/universal/gold.png";
 
   selectDifficulty(diff: string) {
-    this.selectedDifficulty = diff;
+    this.difficultyChange.emit(diff);
   }
 
   get activeDetails() {

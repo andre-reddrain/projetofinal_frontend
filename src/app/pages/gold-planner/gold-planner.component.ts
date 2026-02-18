@@ -31,6 +31,11 @@ export class GoldPlannerComponent {
   progressById = new Map<string, any>();
   originalProgressById = new Map<string, any>();
 
+  /**
+   * Keeps selected difficulties after row collapse
+   */
+  selectedDifficultyMap = new Map<string, string>();
+
   // Table variables
   expandedRows = {};
   
@@ -91,6 +96,9 @@ export class GoldPlannerComponent {
         this.gateProgressService.getCharacterGateProgressByCharacterIds(characterIds).subscribe({
           next: gateProgress => {
             this.gateProgress = gateProgress;
+
+            this.buildLookups();
+
             console.log(gateProgress);
             this.completeRequest();
           },
@@ -136,6 +144,7 @@ export class GoldPlannerComponent {
     })
   }
 
+  // Ordering functions
   getGateDetailsForCharacter(gate: any, characterId: string) {
     // Each gate has gateDetails
     // Each gateDetail has progress for each character
@@ -186,6 +195,20 @@ export class GoldPlannerComponent {
     return this.progressLookup.get(this.makeKey(detailsId, characterId));
   }
 
+  // selectedDifficultyMap functions
+  makeDifficultyKey(gateId: string, characterId: string) {
+    return `${gateId}_${characterId}`;
+  }
+
+  getSelectedDifficulty(gateId: string, characterId: string) {
+    return this.selectedDifficultyMap.get(this.makeDifficultyKey(gateId, characterId)) ?? null;
+  }
+
+  setSelectedDifficulty(gateId: string, characterId: string, diff: string) {
+    this.selectedDifficultyMap.set(this.makeDifficultyKey(gateId, characterId), diff);
+  }
+
+  // Loading functions
   private completeRequest() {
     this.pendingRequests--;
     if (this.pendingRequests <= 0) {
