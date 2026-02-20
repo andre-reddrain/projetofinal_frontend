@@ -2,27 +2,25 @@
     <div class="flex gap-1 justify-content-center mb-2">
         <button
             *ngFor="let diff of gate.details"
-            (click)="selectDifficulty(diff.difficulty)"
+            (click)="selectDifficulty(diff)"
             class="px-2 py-1 border-1 border-round text-sm transition-colors transition-duration-150"
-            [ngClass]="state.selectedDifficulty === diff.difficulty
+            [ngClass]="activeDetailsId === diff.id
                 ? 'bg-primary text-primary-reverse border-primary'
                 : 'bg-secondary hover:surface-100'"
         >
             {{ diff.difficulty }}
         </button>
     </div>
-    @let active = activeDetails;
 
     <div class="flex flex-column gap-1">
         <!-- Taking Gold -->
         <div class="flex align-items-center gap-2">
-            <input 
-                type="checkbox"
-                [disabled]="!active"
-                [checked]="state.takingGold"
+            <input type="checkbox"
+                [disabled]="!activeDetailsId"
+                [checked]="activeState?.takingGold ?? false"
                 (change)="onTakingGoldChange($event)" />
-            <span [pTooltip]="active ? formatGoldTooltip(active) : 'No gold reward'">
-                Gold: <img [src]="goldIcon" width="20" /> {{ active ? getTotalGold(active) : 0 }}
+            <span [pTooltip]="activeDetails ? formatGoldTooltip(activeDetails) : 'No gold reward'">
+                Gold: <img [src]="goldIcon" width="20" /> {{ activeDetails ? getTotalGold(activeDetails) : 0 }}
             </span>
         </div>
 
@@ -30,11 +28,11 @@
         <div class="flex align-items-center gap-2">
             <input
             type="checkbox"
-            [disabled]="!active"
-            [checked]="state.buyExtraLoot"
+            [disabled]="!activeDetailsId"
+            [checked]="activeState?.buyExtraLoot ?? false"
             (change)="onBuyExtraLootChange($event)" />
             <span>
-                Extra cost: <img [src]="goldIcon" width="20" /> {{ active ? active.extralootCost : 0 }}
+                Extra cost: <img [src]="goldIcon" width="20" /> {{ activeDetails ? activeDetails.extralootCost : 0 }}
             </span>
         </div>
     </div>

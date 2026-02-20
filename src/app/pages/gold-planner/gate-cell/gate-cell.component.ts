@@ -1,12 +1,7 @@
 import { NgClass, NgFor } from '@angular/common';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { Tooltip } from "primeng/tooltip";
-
-type GateUIState = {
-  selectedDifficulty: string | null;
-  takingGold: boolean;
-  buyExtraLoot: boolean;
-}
+import { GateProgressState } from '../gold-planner.component';
 
 @Component({
   selector: 'app-gate-cell',
@@ -18,33 +13,52 @@ type GateUIState = {
 export class GateCellComponent {
   @Input() gate!: any;
   @Input() character!: any;
-  @Input() state!: GateUIState;
+
+  @Input() activeDetailsId: string | null = null;
+  @Input() activeState: GateProgressState | null = null;
+
+  @Output() activeDetailsChange = new EventEmitter<string>();
+  @Output() stateChange = new EventEmitter<{
+    characterId: string;
+    gateDetailsId: string;
+    takingGold?: boolean;
+    buyExtraLoot?: boolean
+  }>();
 
   goldIcon = "assets/type_rewards/universal/gold.png";
 
-  @Output() difficultyChange = new EventEmitter<string>();
-  @Output() takingGoldChange = new EventEmitter<boolean>();
-  @Output() buyExtraLootChange = new EventEmitter<boolean>();
-
   // Output events
-  selectDifficulty(diff: string) {
-    this.difficultyChange.emit(diff);
+  selectDifficulty(details: any) {
+    this.activeDetailsChange.emit(details.id);
   }
 
   onTakingGoldChange(event: Event) {
+    if (!this.activeDetailsId) return;
     const checked = (event.target as HTMLInputElement).checked;
-    this.takingGoldChange.emit(checked);
+
+    this.stateChange.emit({
+      characterId: this.character.id,
+      gateDetailsId: this.activeDetailsId,
+      takingGold: checked
+    });
   }
 
   onBuyExtraLootChange(event: Event) {
+    if (!this.activeDetailsId) return;
     const checked = (event.target as HTMLInputElement).checked;
-    this.buyExtraLootChange.emit(checked);
+
+    this.stateChange.emit({
+      characterId: this.character.id,
+      gateDetailsId: this.activeDetailsId,
+      buyExtraLoot: checked
+    });
   }
 
-  get activeDetails() {
-    const selected = this.state?.selectedDifficulty;
-    if (!selected) return null;
-    return this.gate.details.find((d: { difficulty: string | null; }) => d.difficulty === selected) ?? null;
+  get activeDetails(): any | null {
+    if (!this.activeDetailsId) return null;
+
+    // IMPORTANT: adjust `this.gate.details` if your data uses another name
+    return this.gate?.details?.find((d: any) => d.id === this.activeDetailsId) ?? null;
   }
 
   // Gold Tooltip UI helpers

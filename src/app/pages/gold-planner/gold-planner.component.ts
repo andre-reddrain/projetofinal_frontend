@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgFor } from '@angular/common';
+import { NgClass, NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG
@@ -13,19 +13,18 @@ import { CharacterService } from '../../services/character/character.service';
 import { CharacterGateProgressService } from '../../services/character-gate-progress/character-gate-progress.service';
 import { GateCellComponent } from "./gate-cell/gate-cell.component";
 
-/**
- * Contains the UI element values of the <td> of the expanded rows
- */
-type GateUIState = {
-  selectedDifficulty: string | null;
+export type GateProgressState = {
+  id: string | null;
+  characterId: string;
+  gateDetailsId: string;
   takingGold: boolean;
   buyExtraLoot: boolean;
-};
+}
 
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, GateCellComponent],
+  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, GateCellComponent, NgClass],
   templateUrl: './gold-planner.component.html',
   styleUrl: './gold-planner.component.scss'
 })
@@ -35,16 +34,17 @@ export class GoldPlannerComponent {
   raids: any = [];
   gateProgress: any = [];
 
-  progressLookup = new Map<string, any>();
-  progressById = new Map<string, any>();
-  originalProgressById = new Map<string, any>();
+  // Current live UI state
+  progressByKey = new Map<string, GateProgressState>();
 
-  /**
-   * Keeps selected difficulties after row collapse
-   */
-  selectedDifficultyMap = new Map<string, string>();
+  // Snapshot from the Database
+  originalByKey = new Map<string, GateProgressState>();
 
-  gateStateMap = new Map<string, GateUIState>();
+  // Contains what changed - Prepares for the Insert / Update
+  changedByKey = new Map<string, GateProgressState>();
+
+  // Map
+  activeDetailsByGate = new Map<string, string>();
 
   // Table variables
   expandedRows = {};
@@ -89,7 +89,11 @@ export class GoldPlannerComponent {
      this.loadGoldPlanner();
   }
 
-  // Database functions
+  //#region Database functions
+
+  /**
+   * Loads the Characters and their GateProgress
+   */
   loadCharactersAndGateProgress() {
     this.characterService.getCharactersOfUser().subscribe({
       next: (characters: any) => {
@@ -125,6 +129,9 @@ export class GoldPlannerComponent {
     })
   }
 
+  /**
+   * Loads the GoldPlanner settings
+   */
   loadGoldPlanner() {
     this.goldPlannerService.getGoldPlanner().subscribe({
       next: (data: any) => {
@@ -154,14 +161,21 @@ export class GoldPlannerComponent {
     })
   }
 
-  // Ordering functions
+  /**
+   * Makes the Insert / Update of the GateProgress
+   */
+  saveChanges() {
+    console.log("DATABASE, I SUMMON THEE!")
+  }
+
+  //#endregion
+
+  //#region Ordering functions
+
   getGateDetailsForCharacter(gate: any, characterId: string) {
-    // Each gate has gateDetails
-    // Each gateDetail has progress for each character
     return gate.gateDetails
       .filter((d: { progress: { characterId: string; }; }) => d.progress?.characterId === characterId)
       .sort((a: { entryLvl: number; }, b: { entryLvl: number; }) => {
-        // Optional: sort by difficulty or entryLvl
         return a.entryLvl - b.entryLvl;
     });
   }
@@ -182,79 +196,135 @@ export class GoldPlannerComponent {
     })
   }
 
-  // UI functions
+  //#endregion
+
+  //#region State functions
+
+  /**
+   * Builds up the lookups maps.
+   */
   buildLookups() {
-    this.progressLookup.clear();
-    this.progressById.clear();
-    this.originalProgressById.clear();
+    this.progressByKey.clear();
+    this.originalByKey.clear();
+    this.changedByKey.clear();
 
-    this.gateProgress.forEach((p: any) => {
-      const key = this.makeKey(p.gateDetailsId, p.characterId);
+    for (const p of this.gateProgress) {
+      const state: GateProgressState = {
+        id: p.id ?? null,
+        characterId: p.characterId,
+        gateDetailsId: p.gateDetailsId,
+        takingGold: !!p.takingGold,
+        buyExtraLoot: !!p.buyExtraLoot
+      }
+  
+      const key = this.makeKey(p.characterId, p.gateDetailsId);
 
-      this.progressLookup.set(key, p);
-      this.progressById.set(p.id, p);
-      this.originalProgressById.set(p.id, structuredClone(p))
-    })
-  }
-
-  makeKey(gateDetailsId: string, characterId: string) {
-    return `${gateDetailsId}_${characterId}`;
-  }
-
-  getProgress(detailsId: string, characterId: string) {
-    return this.progressLookup.get(this.makeKey(detailsId, characterId));
-  }
-
-  // selectedDifficultyMap functions
-  makeDifficultyKey(gateId: string, characterId: string) {
-    return `${gateId}_${characterId}`;
-  }
-
-  getSelectedDifficulty(gateId: string, characterId: string) {
-    return this.selectedDifficultyMap.get(this.makeDifficultyKey(gateId, characterId)) ?? null;
-  }
-
-  setSelectedDifficulty(gateId: string, characterId: string, diff: string) {
-    this.selectedDifficultyMap.set(this.makeDifficultyKey(gateId, characterId), diff);
-  }
-
-  // gateStateMap functions
-  makeGateKey(gateId: string, characterId: string) {
-    return `${gateId}_${characterId}`;
-  }
-
-  getGateState(gateId: string, characterId: string): GateUIState {
-    const key = this.makeGateKey(gateId, characterId);
-
-    if (!this.gateStateMap.has(key)) {
-      this.gateStateMap.set(key, {
-        selectedDifficulty: null,
-        takingGold: false,
-        buyExtraLoot: false
-      });
+      this.progressByKey.set(key, state);
+      this.originalByKey.set(key, structuredClone(state))
     }
-
-    return this.gateStateMap.get(key)!;
   }
 
-  // gateStateMap helper functions
-  setDifficulty(gateId: string, characterId: string, difficulty: string) {
-    const state = this.getGateState(gateId, characterId);
-
-    state.selectedDifficulty = difficulty;
-
-    // Reset toggles
-    state.takingGold = false;
-    state.buyExtraLoot = false;
+  /**
+   * Generates a key to bind Character and GateDetails - For the maps
+   * @param characterId Character ID
+   * @param gateDetailsId GateDetails ID
+   * @returns Key: characterId_gateDetailsId
+   */
+  makeKey(characterId: string, gateDetailsId: string) {
+    return `${characterId}_${gateDetailsId}`;
   }
 
-  setTakingGold(gateId: string, characterId: string, value: boolean) {
-    console.log(value);
-    this.getGateState(gateId, characterId).takingGold = value;
+  makeGateKey(characterId: string, gateId: string) {
+    return `${characterId}_${gateId}`;
   }
 
-  setBuyExtraLoot(gateId: string, characterId: string, value: boolean) {
-    this.getGateState(gateId, characterId).buyExtraLoot = value;;
+  /**
+   * Gets the existing GateProgress from the original map, or else, creates a new one
+   * @param characterId Character ID
+   * @param gateDetailsId GateDetails ID
+   * @returns Existing GateProgress or new
+   */
+  getOrCreateState(characterId: string, gateDetailsId: string): GateProgressState {
+    const key = this.makeKey(characterId, gateDetailsId);
+
+    const existing = this.progressByKey.get(key);
+    if (existing) return existing;
+
+    // GateProgress does not exist. We are going to create it
+    const created: GateProgressState = {
+      id: null,
+      characterId,
+      gateDetailsId,
+      takingGold: false,
+      buyExtraLoot: false
+    };
+
+    this.progressByKey.set(key, created);
+
+    this.originalByKey.set(key, structuredClone(created));
+
+    return created;
+  }
+
+  /**
+   * Detects changes versus the original GateProgressState
+   * @param state GateProgressState changed
+   */
+  private upsertChanged(state: GateProgressState) {
+    const key = this.makeKey(state.characterId, state.gateDetailsId);
+    const original = this.originalByKey.get(key);
+
+    const changed =
+      !original ||
+      state.takingGold !== original.takingGold ||
+      state.buyExtraLoot !== original.buyExtraLoot;
+
+    if (changed) {
+      this.changedByKey.set(key, structuredClone(state));
+    } else {
+      this.changedByKey.delete(key);
+    }
+  }
+
+  isDirty(characterId: string, gateDetailsId: string): boolean {
+    return this.changedByKey.has(this.makeKey(characterId, gateDetailsId));
+  }
+
+  onActiveDetailsChange(characterId: string, gateId: string, detailsId: string) {
+    this.setActiveDetailsId(characterId, gateId, detailsId);
+    this.getOrCreateState(characterId, detailsId);
+  }
+
+  onGateStateChange(patch: { characterId: string; gateDetailsId: string; takingGold?: boolean; buyExtraLoot?: boolean }) {
+    const state = this.getOrCreateState(patch.characterId, patch.gateDetailsId);
+
+    if (typeof patch.takingGold === 'boolean') state.takingGold = patch.takingGold;
+    if (typeof patch.buyExtraLoot === 'boolean') state.buyExtraLoot = patch.buyExtraLoot;
+
+    this.upsertChanged(state);
+  }
+
+  getChangedPayload(): GateProgressState[] {
+    return Array.from(this.changedByKey.values())
+  }
+
+  commitChanges() {
+    for (const [key, state] of this.changedByKey.entries()) {
+      this.originalByKey.set(key, structuredClone(state));
+    }
+    this.changedByKey.clear();
+  }
+
+  //#endregion
+
+  //#region Get / Set
+
+  getActiveDetailsId(characterId: string, gateId: string): string | null {
+    return this.activeDetailsByGate.get(this.makeGateKey(characterId, gateId)) ?? null;
+  }
+
+  setActiveDetailsId(characterId: string, gateId: string, gateDetailsId: string) {
+    this.activeDetailsByGate.set(this.makeGateKey(characterId, gateId), gateDetailsId);
   }
 
   // Loading functions
@@ -264,4 +334,6 @@ export class GoldPlannerComponent {
       this.loading = false;
     }
   }
+
+  //#endregion 
 }

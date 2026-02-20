@@ -2,3 +2,9 @@
   width: 400px;
   min-width: 400px;
 }
+
+:host ::ng-deep td.cell-dirty {
+  outline: 2px solid var(--primary-color);
+  outline-offset: -2px;
+  background: rgba(248, 141, 79, 0.08);
+}
