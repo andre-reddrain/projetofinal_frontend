@@ -19,6 +19,7 @@ export type GateProgressState = {
   gateDetailsId: string;
   takingGold: boolean;
   buyExtraLoot: boolean;
+  selected: boolean;
 }
 
 @Component({
@@ -112,8 +113,9 @@ export class GoldPlannerComponent {
             this.gateProgress = gateProgress;
 
             this.buildLookups();
+            this.initializeActiveDetailsSelections();
 
-            console.log(gateProgress);
+            // console.log(gateProgress);
             this.completeRequest();
           },
           error: err => {
@@ -151,7 +153,9 @@ export class GoldPlannerComponent {
               })
             })
         });
-        console.log(this.raids);
+        
+        this.initializeActiveDetailsSelections();
+
         this.completeRequest();
       },
       error: err => {
@@ -165,7 +169,18 @@ export class GoldPlannerComponent {
    * Makes the Insert / Update of the GateProgress
    */
   saveChanges() {
-    console.log("DATABASE, I SUMMON THEE!")
+    const payload = this.getChangedPayload();
+
+    if (payload.length === 0) return;
+
+    this.gateProgressService.bulkUpsertGateProgress(payload).subscribe({
+      next: () => {
+        this.commitChanges();
+      },
+      error: (err: any) => {
+        console.error(err);
+      }
+    })
   }
 
   //#endregion
@@ -214,13 +229,40 @@ export class GoldPlannerComponent {
         characterId: p.characterId,
         gateDetailsId: p.gateDetailsId,
         takingGold: !!p.takingGold,
-        buyExtraLoot: !!p.buyExtraLoot
+        buyExtraLoot: !!p.buyExtraLoot,
+        selected: !!p.selected
       }
   
       const key = this.makeKey(p.characterId, p.gateDetailsId);
 
       this.progressByKey.set(key, state);
       this.originalByKey.set(key, structuredClone(state))
+    }
+  }
+
+  private initializeActiveDetailsSelections() {
+    if (!this.raids?.length || !this.characters?.length) return;
+
+    for (const raid of this.raids) {
+      for (const gate of raid.gates) {
+        for (const char of this.characters) {
+          const gateKey = this.makeGateKey(char.id, gate.id);
+
+          // Don't override user's current selection
+          if (this.activeDetailsByGate.has(gateKey)) continue;
+
+          // Find a details that is selected = true in the database
+          const selectedDetails = gate.details?.find((d: any) => {
+            const s = this.progressByKey.get(this.makeKey(char.id, d.id));
+            return s?.selected === true;
+          });
+
+          if (selectedDetails) {
+            this.setActiveDetailsId(char.id, gate.id, selectedDetails.id);
+          }
+          // else: leave null (no default selection)
+        }
+      }
     }
   }
 
@@ -256,7 +298,8 @@ export class GoldPlannerComponent {
       characterId,
       gateDetailsId,
       takingGold: false,
-      buyExtraLoot: false
+      buyExtraLoot: false,
+      selected: false
     };
 
     this.progressByKey.set(key, created);
@@ -277,7 +320,8 @@ export class GoldPlannerComponent {
     const changed =
       !original ||
       state.takingGold !== original.takingGold ||
-      state.buyExtraLoot !== original.buyExtraLoot;
+      state.buyExtraLoot !== original.buyExtraLoot ||
+      state.selected !== original.selected;
 
     if (changed) {
       this.changedByKey.set(key, structuredClone(state));
@@ -290,9 +334,22 @@ export class GoldPlannerComponent {
     return this.changedByKey.has(this.makeKey(characterId, gateDetailsId));
   }
 
-  onActiveDetailsChange(characterId: string, gateId: string, detailsId: string) {
-    this.setActiveDetailsId(characterId, gateId, detailsId);
-    this.getOrCreateState(characterId, detailsId);
+  onActiveDetailsChange(characterId: string, gateId: string, newDetailsId: string) {
+    const oldDetailsId = this.getActiveDetailsId(characterId, gateId);
+
+    if (oldDetailsId && oldDetailsId !== newDetailsId) {
+      const oldState = this.getOrCreateState(characterId, oldDetailsId);
+
+      oldState.selected = false;
+
+      this.upsertChanged(oldState);
+    }
+
+    const newState = this.getOrCreateState(characterId, newDetailsId);
+    newState.selected = true;
+    this.upsertChanged(newState);
+
+    this.setActiveDetailsId(characterId, gateId, newDetailsId);
   }
 
   onGateStateChange(patch: { characterId: string; gateDetailsId: string; takingGold?: boolean; buyExtraLoot?: boolean }) {

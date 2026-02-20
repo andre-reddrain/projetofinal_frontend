@@ -1,5 +1,6 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { GateProgressState } from '../../pages/gold-planner/gold-planner.component';
 
 @Injectable({
   providedIn: 'root'
@@ -19,5 +20,11 @@ export class CharacterGateProgressService {
     })
 
     return this.http.get<[]>(url, { params });
+  }
+
+  bulkUpsertGateProgress(progress: GateProgressState[]) {
+    const url = this.baseUrl + "/api/gate-progress/bulk";
+
+    return this.http.put(url, progress);
   }
 }
