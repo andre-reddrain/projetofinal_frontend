@@ -1,1 +1,76 @@
-<p>checklist works!</p>
+<div class="flex flex-column h-full">
+    <h1 class="flex-none mb-4">Checklist</h1>
+
+    @if (loading) {
+        <div class="flex-1 flex align-items-center justify-content-center">
+            <p-progress-spinner ariaLabel="loading" [style]="{ 'stroke': '#6366f1'}" />
+        </div>
+    }
+    @else if (characters.length === 0) {
+        <div class="flex flex-1 align-items-center justify-content-center">
+            <h1>No characters found!</h1>
+        </div>
+    }
+    @else {
+        <div #tableContainer class="flex-1 overflow-auto">
+            <p-table
+                [value]="filteredRaids"
+                scrollable="true"
+                scrollHeight="flex"
+                showGridlines
+                [tableStyle]="{ width: '100%'}"
+                styleClass="p-datatable-sm flex-none">
+
+                <!-- Header -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pFrozenColumn class="frozen">Raids</th>
+
+                        <th
+                            *ngFor="let char of characters"
+                            class="text-center text-nowrap overflow-hidden">
+
+                            <div class="flex align-items-center justify-content-center gap-1">
+                                <img [src]="char.characterClassIcon" width="24" height="24">
+                                <span>{{ char.name }}</span>
+                                <span class="text-sm text-gray-600">[{{ char.ilvl }}]</span>
+                            </div>
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <!-- Body -->
+                <ng-template pTemplate="body" let-raid>
+                    <tr>
+                        <td pFrozenColumn class="frozen">
+                            <div class="flex align-items-center gap-2">
+                                <img [src]="getRaidIcon(raid.type)" width="20" />
+                                {{ raid.name }}
+                            </div>
+                        </td>
+
+                        <td
+                            *ngFor="let char of characters"
+                            class="text-center text-nowrap"
+                        >
+                            buh
+
+                            <!-- <ng-container *ngIf="getCharacterRaid(raid.id, char.id) as cr">
+                                <div>
+                                    <label class="table-switch">
+                                        <input
+                                            type="checkbox"
+                                            [checked]="cr.tracked"
+                                            (change)="onToggle($event,cr.id)"
+                                        />
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </ng-container> -->
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+    }
+</div>

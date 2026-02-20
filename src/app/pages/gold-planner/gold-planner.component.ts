@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 // PrimeNG
@@ -10,7 +10,6 @@ import { ButtonModule } from 'primeng/button';
 // Services
 import { GoldPlannerService } from '../../services/gold-planner/gold-planner.service';
 import { CharacterService } from '../../services/character/character.service';
-import { TooltipModule } from "primeng/tooltip";
 import { CharacterGateProgressService } from '../../services/character-gate-progress/character-gate-progress.service';
 import { GateCellComponent } from "./gate-cell/gate-cell.component";
 
@@ -26,7 +25,7 @@ type GateUIState = {
 @Component({
   selector: 'app-gold-planner',
   standalone: true,
-  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, TooltipModule, GateCellComponent],
+  imports: [ProgressSpinner, FormsModule, TableModule, NgFor, ButtonModule, GateCellComponent],
   templateUrl: './gold-planner.component.html',
   styleUrl: './gold-planner.component.scss'
 })
