@@ -5,13 +5,13 @@ import { RaidsService } from '../../services/raids/raids.service';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { TableModule } from 'primeng/table';
 import { FormsModule } from '@angular/forms';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 
 @Component({
   selector: 'app-checklist',
   standalone: true,
-  imports: [TableModule, FormsModule, NgFor, ProgressSpinner],
+  imports: [TableModule, FormsModule, NgFor, NgIf, ProgressSpinner],
   templateUrl: './checklist.component.html',
   styleUrl: './checklist.component.scss'
 })
@@ -93,6 +93,7 @@ export class ChecklistComponent {
             // this.buildLookups();
             this.buildTrackedRaidIds();
             this.applyRaidFilter();
+            this.generateRandomChecklist();
             this.completeRequest();
           },
           error: err => {
@@ -137,6 +138,29 @@ export class ChecklistComponent {
     this.filteredRaids = (this.raids ?? []).filter((r: any) =>
       this.trackedRaidIds.has(r.id)
     )
+  }
+
+  randomChecklist = new Map<string, { done: number; total: number }>();
+
+  private makeKey(raidId: string, characterId: string) {
+    return `${raidId}_${characterId}`;
+  }
+
+  private generateRandomChecklist() {
+    this.randomChecklist.clear();
+
+    for (const raid of this.filteredRaids ?? []) {
+      for (const char of this.characters ?? []) {
+
+        const total = Math.floor(Math.random() * 3) + 1; // 1 to 3
+        const done = Math.floor(Math.random() * (total + 1)); // 0 to total
+
+        this.randomChecklist.set(
+          this.makeKey(raid.id, char.id),
+          { done, total }
+        );
+      }
+    }
   }
 
   // Loading functions
