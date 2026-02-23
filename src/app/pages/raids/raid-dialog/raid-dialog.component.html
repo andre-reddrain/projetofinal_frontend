@@ -1,0 +1,21 @@
+<p-dialog
+    header="{{ raid?.name }}"
+    [modal]="true"
+    [(visible)]="visible"
+    [draggable]="false"
+    [resizable]="false"
+    [dismissableMask]="true"
+    (onHide)="close()"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+
+    <div *ngFor="let group of difficulties">
+        <h3>{{ group.difficulty }}</h3>
+        <ul>
+            <li *ngFor="let gate of group.gates">
+                {{ gate.gateName }} // {{ gate.entryLvl }} ({{ gate.extralootCost }})
+            </li>
+        </ul>
+    </div>
+
+</p-dialog>

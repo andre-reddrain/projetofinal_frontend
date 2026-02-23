@@ -1,0 +1,75 @@
+<div
+    *ngIf="selectedGateDetails"
+    class="mb-3 p-2 border-round"
+    [style.background-color]="getDifficultyClass(selectedGateDetails.difficulty)"
+>
+  <div class="text-sm text-gray-500">Selected Gate</div>
+  <div class="font-bold text-lg">
+    [{{selectedGateDetails.difficulty }}] {{ selectedGateDetails.gateName }}
+  </div>
+</div>
+
+<form #rewardForm="ngForm" class="flex flex-column gap-4">
+    <p-floatlabel class="w-56" variant="on">
+        <p-select 
+            inputId="rewardType"
+            [options]="typeRewards"
+            optionLabel="name"
+            name="reward"
+            [(ngModel)]="selectedTypeReward"
+            styleClass="w-full"
+            required 
+        >
+            <!-- Template for the selectedItem -->
+            <ng-template pTemplate="selectedItem" let-item>
+                <div class="flex align-items-center gap-2">
+                    <img [src]="item.icon" width="32" height="32" />
+                    <span>[T{{item.tier}}] {{ item.name }} </span>
+                </div>
+            </ng-template>
+
+            <!-- Template for the Select Item -->
+            <ng-template pTemplate="item" let-item>
+                <div class="flex align-items-center gap-2">
+                    <img [src]="item.icon" width="32" height="32" />
+                    <span>[T{{item.tier}}] {{ item.name }} </span>
+                </div>
+            </ng-template>
+        </p-select>
+
+        <label for="rewardType">Type Rewards</label>
+    </p-floatlabel>
+
+    <p-floatLabel variant="on">
+        <p-input-number
+            inputId="quantity"
+            name="quantity"
+            [(ngModel)]="quantity"
+            [required]="true"
+            [min]="1"
+            showButtons
+            styleClass="w-full"
+        ></p-input-number>
+        <label for="quantity">Quantity</label>
+    </p-floatLabel>
+
+    <div class="flex align-items-center gap-2">
+    <p-checkbox
+        inputId="extraReward"
+        name="extraReward"
+        [(ngModel)]="isExtraReward"
+        binary
+    ></p-checkbox>
+
+    <label for="extraReward">Extra Reward</label>
+    </div>
+
+    <p-button
+        label="Add Reward"
+        icon="pi pi-plus"
+        class="w-full"
+        severity="success"
+        [disabled]="!canAddReward() || rewardForm.invalid"
+        (onClick)="submit(rewardForm)"
+    ></p-button>
+    </form>

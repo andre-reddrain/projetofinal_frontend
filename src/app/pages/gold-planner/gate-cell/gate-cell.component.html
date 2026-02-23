@@ -1,0 +1,39 @@
+@if(character.ilvl >= gate.details[0].entryLvl) {
+    <div class="flex gap-1 justify-content-center mb-2">
+        <button
+            *ngFor="let diff of gate.details"
+            (click)="selectDifficulty(diff)"
+            class="px-2 py-1 border-1 border-round text-sm transition-colors transition-duration-150"
+            [ngClass]="activeDetailsId === diff.id
+                ? 'bg-primary text-primary-reverse border-primary'
+                : 'bg-secondary hover:surface-100'"
+        >
+            {{ diff.difficulty }}
+        </button>
+    </div>
+
+    <div class="flex flex-column gap-1">
+        <!-- Taking Gold -->
+        <div class="flex align-items-center gap-2">
+            <input type="checkbox"
+                [disabled]="!activeDetailsId"
+                [checked]="activeState?.takingGold ?? false"
+                (change)="onTakingGoldChange($event)" />
+            <span [pTooltip]="activeDetails ? formatGoldTooltip(activeDetails) : 'No gold reward'">
+                Gold: <img [src]="goldIcon" width="20" /> {{ activeDetails ? getTotalGold(activeDetails) : 0 }}
+            </span>
+        </div>
+
+        <!-- Buy Extra Loot -->
+        <div class="flex align-items-center gap-2">
+            <input
+            type="checkbox"
+            [disabled]="!activeDetailsId"
+            [checked]="activeState?.buyExtraLoot ?? false"
+            (change)="onBuyExtraLootChange($event)" />
+            <span>
+                Extra cost: <img [src]="goldIcon" width="20" /> {{ activeDetails ? activeDetails.extralootCost : 0 }}
+            </span>
+        </div>
+    </div>
+}

@@ -1,0 +1,9 @@
+.no-underline {
+  text-decoration: none;
+  color: inherit;
+}
+
+::ng-deep .p-menu.p-menu-overlay {
+  width: 150px !important;
+  min-width: 0 !important;
+}

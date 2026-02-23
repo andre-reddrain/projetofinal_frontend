@@ -1,0 +1,31 @@
+<p-toast />
+<div class="grid" style="height: 100%;">
+    <div class="col-4 overflow-y-auto h-full p-2">
+        <h1>Gate Details</h1>
+        <app-reward-gate-details
+            [gateDetailsData]="gateDetailsData"
+            (gateDetailSelected)="loadRewards($event)"
+            ></app-reward-gate-details>
+    </div>
+
+    <!-- Reward Form -->
+    <div class="col-3 p-2">
+        <h1>Reward Form</h1>
+        <app-reward-form
+            [typeRewards]="typeRewards"
+            [rewardsToInsert]="rewardsToInsert"
+            [selectedGateDetails]="selectedGateDetails"
+            (submitReward)="onRewardAdded($event)"
+        ></app-reward-form>
+    </div>
+
+    <!-- Rewards of GateDetails && Rewards to Insert -->
+    <div class="col-4 p-2">
+        <app-reward-list
+            [rewardsData]="rewardsData"
+            [rewardsToInsert]="rewardsToInsert"
+            (submitRewardsRequest)="submitRewards()"
+            (removeRewardRequest)="removeReward($event)">
+        </app-reward-list>
+    </div>
+</div>

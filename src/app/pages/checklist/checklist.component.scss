@@ -1,0 +1,12 @@
+.check-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.check-badge.complete {
+  background-color: rgba(99, 102, 241, 0.1);
+  color: #6366f1;
+}

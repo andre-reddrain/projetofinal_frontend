@@ -1,0 +1,22 @@
+.sidebar-card {
+  height: 99.7%;
+  border-top: none;
+  border-left: 1px solid var(--p-content-border-color);
+  border-right: 1px solid var(--p-content-border-color);
+  border-bottom: 1px solid var(--p-content-border-color);
+}
+
+.item-link {
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+}
+
+.item-link:hover {
+    background: var(--p-button-secondary-hover-background) !important;
+}
+
+.sidebar-card a.active-menu-item {
+    background: var(--p-highlight-background) !important;
+    color: var(--p-highlight-color) !important;
+}

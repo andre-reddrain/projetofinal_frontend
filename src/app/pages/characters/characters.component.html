@@ -1,0 +1,39 @@
+<p-toast />
+
+<!-- Create character Form -->
+<app-character-form
+    [(visible)]="visible"
+    [characterClasses]="characterClasses"
+    (responseMessage)="handleResponseMessage($event)">
+</app-character-form>
+
+<div class="flex flex-column h-full">
+    <!-- Header content -->
+    <div class="flex align-items-center justify-content-between flex-none">
+        <h1 class="flex-none">Characters</h1>
+        <p-button icon="pi pi-plus" class="mr-2" [rounded]="true" (onClick)="showCharacterForm()" />
+    </div>
+
+    <div class="flex-1 flex flex-column">
+        @if (loading) {
+            <div class="flex-1 flex align-items-center justify-content-center">
+                <p-progress-spinner ariaLabel="loading" [style]="{ 'stroke': '#6366f1'}" />
+            </div>
+        }
+        @else if (characters.length === 0) {
+            <div class="flex flex-1 align-items-center justify-content-center">
+                <h1>No characters found!</h1>
+            </div>
+        }
+        @else {
+            <!-- Character List + Edit Form -->
+            <app-character-list
+                *ngFor="let character of characters; trackBy: trackByCharacterId"
+                [character]="character"
+                [characterClasses]="characterClasses"
+                (responseMessage)="handleResponseMessage($event)"
+                (deleteCharacter)="deleteCharacter($event)">
+            </app-character-list>
+        }
+    </div>
+</div>

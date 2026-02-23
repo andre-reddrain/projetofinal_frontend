@@ -1,0 +1,120 @@
+<div class="flex flex-column h-full">
+    <h1 class="flex-none mb-4">Gold Planner</h1>
+
+    @if (loading) {
+        <div class="flex-1 flex align-items-center justify-content-center">
+            <p-progress-spinner ariaLabel="loading" [style]="{ 'stroke': '#6366f1'}" />
+        </div>
+    }
+    @else if (characters.length === 0) {
+        <div class="flex flex-1 align-items-center justify-content-center">
+            <h1>No characters found!</h1>
+        </div>
+    }
+    @else {
+        <div #tableContainer class="flex-1 overflow-auto">
+            <p-table
+                [value]="raids"
+                scrollable="true"
+                scrollHeight="flex"
+                showGridlines
+                dataKey="id"
+                [expandedRowKeys]="expandedRows"
+                [tableStyle]="{ width: '100%'}"
+                styleClass="p-datatable-sm flex-none">
+
+                <!-- Header -->
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th pFrozenColumn class="frozen">Raids</th>
+
+                        <th
+                            *ngFor="let char of characters"
+                            class="text-center text-nowrap overflow-hidden"
+                            [style.mid-width.px]="100">
+
+                            <div class="flex align-items-center justify-content-center gap-1">
+                                <img [src]="char.characterClassIcon" width="24" height="24">
+                                <span>{{ char.name }}</span>
+                                <span class="text-sm text-gray-600">[{{ char.ilvl }}]</span>
+                            </div>
+                        </th>
+                    </tr>
+                </ng-template>
+
+                <!-- Body -->
+                <ng-template pTemplate="body" let-raid let-expanded="expanded">
+                    <tr>
+                        <td pFrozenColumn class="frozen">
+                            <div class="flex align-items-center gap-2">
+                                <img [src]="getRaidIcon(raid.type)" width="20" />
+                                <strong>{{ raid.name }}</strong>
+                                <p-button type="button" pRipple [pRowToggler]="raid" [text]="true" [rounded]="true" [plain]="true" [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'" />
+                            </div>
+                        </td>
+
+                        <td
+                            *ngFor="let char of characters"
+                            class="text-center text-nowrap"
+                            [style.min-width.px]="200">
+                            <span></span>
+                        </td>
+                    </tr>
+                </ng-template>
+
+                <!-- Body - Expanded -->
+                <ng-template #expandedrow let-raid>
+                    <!-- Gates rows -->
+                    <tr *ngFor="let gate of raid.gates">
+                    
+                        <!-- Gate info -->
+                        <td pFrozenColumn class="frozen p-1">
+                            <div class="flex align-items-center gap-2 ml-6">
+                                <img [src]="getRaidIcon(raid.type)" width="20" />
+                                <strong class="white-space-nowrap">
+                                    [Gate {{ gate.number }}] -
+                                </strong>
+                                <span class="white-space-normal">
+                                    {{ gate.name }}
+                                </span>
+                            </div>
+                        </td>
+
+                        <!-- Character Gate Details -->
+                        <td *ngFor="let char of characters" 
+                            class="text-center text-nowrap"
+                            [style.min-width.px]="200"
+                            [ngClass]="
+                                getActiveDetailsId(char.id, gate.id) &&
+                                isDirty(char.id, getActiveDetailsId(char.id, gate.id)!)
+                                    ? 'cell-dirty'
+                                    : ''
+                                ">
+
+                            <app-gate-cell
+                                [gate]="gate"
+                                [character]="char"
+                                [activeDetailsId]="getActiveDetailsId(char.id, gate.id)"
+                                [activeState]="getActiveDetailsId(char.id, gate.id)
+                                    ? getOrCreateState(char.id, getActiveDetailsId(char.id, gate.id)!)
+                                    : null"
+                                (activeDetailsChange)="onActiveDetailsChange(char.id, gate.id, $event)"
+                                (stateChange)="onGateStateChange($event)">
+                            </app-gate-cell>                           
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <div class="flex justify-content-end pt-2 mt-2">
+            <p-button
+                label="Save"
+                icon="pi pi-check"
+                [disabled]="changedByKey.size === 0 || loading"
+                (onClick)="saveChanges()"
+                class="mr-2">
+            </p-button>
+        </div>
+    }
+</div>
