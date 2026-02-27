@@ -27,4 +27,12 @@ export class CharacterGateProgressService {
 
     return this.http.put(url, progress);
   }
+
+  setGateProgressCompleted(id: string, value: boolean) {
+    const url = `${this.baseUrl}/api/gate-progress/${id}/complete`;
+    
+    return this.http.patch(url, null, {
+      params: { value: value }
+    });
+  }
 }

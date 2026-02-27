@@ -1,17 +1,22 @@
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { NgFor, NgIf } from '@angular/common';
+
+// PrimeNG
+import { TableModule } from 'primeng/table';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { ProgressBarModule } from 'primeng/progressbar';
+
+// Services
 import { CharacterService } from '../../services/character/character.service';
 import { CharacterGateProgressService } from '../../services/character-gate-progress/character-gate-progress.service';
 import { RaidsService } from '../../services/raids/raids.service';
-import { ProgressSpinner } from 'primeng/progressspinner';
-import { TableModule } from 'primeng/table';
-import { FormsModule } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
 import { CharacterRaidsService } from '../../services/character-raids/character-raids.service';
 
 @Component({
   selector: 'app-checklist',
   standalone: true,
-  imports: [TableModule, FormsModule, NgFor, NgIf, ProgressSpinner],
+  imports: [TableModule, FormsModule, NgFor, NgIf, ProgressSpinner, ProgressBarModule],
   templateUrl: './checklist.component.html',
   styleUrl: './checklist.component.scss'
 })
@@ -144,6 +149,40 @@ export class ChecklistComponent {
     const done = selected.filter((p: any) => p.isCompleted === true).length;
 
     return { done, total: selected.length };
+  }
+
+  getPercent(done: number, total: number): number {
+    if (!total) return 0;
+    return Math.round((done / total) * 100);
+  }
+
+  completeProgress(raidId: string, characterId: string) {
+    const selected = (this.gateProgress ?? []).filter((p: any) =>
+      p.characterId === characterId &&
+      p.raidId === raidId &&
+      p.selected === true
+    )
+    .sort((a: any, b: any) => (a.gateNumber ?? 999) - (b.gateNumber ?? 999));
+
+    if (selected.length === 0) return;
+
+    const doneCount = selected.filter((p: any) => p.isCompleted === true).length;
+
+    // If not all done: mark the next incomplete as completed
+    if (doneCount < selected.length) {
+      const gateProgress = selected.find((p: any) => p.isCompleted !== true);
+      if (!gateProgress) return;
+
+      // Update the gateProgress to Completed
+      this.gateProgressService.setGateProgressCompleted(gateProgress.id, true).subscribe({
+        next: () => {
+          gateProgress.isCompleted = true;
+        },
+        error: (err: any) => {
+          console.error(err);
+        }
+      })
+    }
   }
 
   // Loading functions

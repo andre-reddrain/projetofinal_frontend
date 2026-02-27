@@ -10,3 +10,27 @@
   background-color: rgba(99, 102, 241, 0.1);
   color: #6366f1;
 }
+
+.progress-wrap {
+  position: relative;
+  width: 110px;
+  margin: 0 auto;
+  cursor: pointer;
+  user-select: none;
+}
+
+:host ::ng-deep .check-progress {
+  height: 20px;
+  border-radius: 0.75rem;
+}
+
+.progress-label {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  pointer-events: none;
+}
