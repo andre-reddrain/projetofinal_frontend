@@ -74,10 +74,6 @@ export class ChecklistComponent {
         this.gateProgressService.getCharacterGateProgressByCharacterIds(characterIds).subscribe({
           next: gateProgress => {
             this.gateProgress = gateProgress;
-
-            // this.buildLookups();
-
-            console.log(gateProgress);
             this.completeRequest();
           },
           error: err => {
@@ -90,10 +86,8 @@ export class ChecklistComponent {
         this.characterRaidsService.getCharacterRaidsByCharacterIds(characterIds).subscribe({
           next: charRaids => {
             this.characterRaids = charRaids;
-            // this.buildLookups();
             this.buildTrackedRaidIds();
             this.applyRaidFilter();
-            this.generateRandomChecklist();
             this.completeRequest();
           },
           error: err => {
@@ -110,7 +104,7 @@ export class ChecklistComponent {
   }
 
   loadRaids() {
-    this.raidService.getAllRaids().subscribe({
+    this.raidService.getAllRaidsWithGates().subscribe({
       next: (data: any) => {
         this.raids = data;
         this.applyRaidFilter();
@@ -140,27 +134,16 @@ export class ChecklistComponent {
     )
   }
 
-  randomChecklist = new Map<string, { done: number; total: number }>();
+  getChecklistCount(raidId: string, characterId: string) {
+    const selected = this.gateProgress.filter((p: any) =>
+      p.characterId === characterId &&
+      p.raidId === raidId &&
+      p.selected === true
+    );
 
-  private makeKey(raidId: string, characterId: string) {
-    return `${raidId}_${characterId}`;
-  }
+    const done = selected.filter((p: any) => p.isCompleted === true).length;
 
-  private generateRandomChecklist() {
-    this.randomChecklist.clear();
-
-    for (const raid of this.filteredRaids ?? []) {
-      for (const char of this.characters ?? []) {
-
-        const total = Math.floor(Math.random() * 3) + 1; // 1 to 3
-        const done = Math.floor(Math.random() * (total + 1)); // 0 to total
-
-        this.randomChecklist.set(
-          this.makeKey(raid.id, char.id),
-          { done, total }
-        );
-      }
-    }
+    return { done, total: selected.length };
   }
 
   // Loading functions

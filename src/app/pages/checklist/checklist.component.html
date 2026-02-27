@@ -50,12 +50,12 @@
                         </td>
 
                         <td *ngFor="let char of characters" class="text-center text-nowrap">
-                            <ng-container *ngIf="randomChecklist.get(raid.id + '_' + char.id) as c">
-                                <span class="check-badge">
+                            <ng-container *ngIf="getChecklistCount(raid.id, char.id) as c">
+                                <span *ngIf="c.total > 0" class="check-badge">
                                     {{ c.done }}/{{ c.total }}
                                 </span>
                             </ng-container>
-                    </td>
+                        </td>
                     </tr>
                 </ng-template>
             </p-table>
