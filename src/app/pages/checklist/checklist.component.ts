@@ -30,6 +30,7 @@ export class ChecklistComponent {
   // Table data
   trackedRaidIds = new Set<string>();
   filteredRaids: any[] = [];
+  trackedByCharRaid = new Map<string, boolean>();
 
   // Loading variables
   loading = true;
@@ -122,15 +123,29 @@ export class ChecklistComponent {
     })
   }
 
+  private makeCharRaidKey(characterId: string, raidId: string) {
+    return `${characterId}_${raidId}`;
+  }
+
   // TODO make this change on the backend!
   buildTrackedRaidIds() {
     this.trackedRaidIds.clear();
+    this.trackedByCharRaid.clear();
 
-    for (const cr of this.characterRaids) {
-      if (cr.tracked) {
+    for (const cr of this.characterRaids ?? []) {
+      const key = this.makeCharRaidKey(cr.characterId, cr.raidId);
+      const tracked = !!cr.tracked;
+
+      this.trackedByCharRaid.set(key, tracked);
+
+      if (tracked) {
         this.trackedRaidIds.add(cr.raidId);
       }
     }
+  }
+
+  isTrackedForCharacter(raidId: string, characterId: string): boolean {
+    return this.trackedByCharRaid.get(this.makeCharRaidKey(characterId, raidId)) === true;
   }
 
   applyRaidFilter() {

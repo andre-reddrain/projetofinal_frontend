@@ -50,21 +50,23 @@
                         </td>
 
                         <td *ngFor="let char of characters" class="text-center text-nowrap">
-                            <ng-container *ngIf="getChecklistCount(raid.id, char.id) as c">
-                                <div 
-                                    *ngIf="c.total"
-                                    class="progress-wrap"
-                                    (click)="completeProgress(raid.id, char.id)"
-                                    role="button"
-                                    tabindex="0"
-                                >
-                                    <p-progressBar
-                                        [value]="getPercent(c.done, c.total)"
-                                        [showValue]="false"
-                                        styleClass="check-progress"
-                                    ></p-progressBar>
-                                    <span class="progress-label">{{ c.done }}/{{ c.total }}</span>
-                                </div>
+                            <ng-container *ngIf="isTrackedForCharacter(raid.id, char.id)">
+                                <ng-container *ngIf="getChecklistCount(raid.id, char.id) as c">
+                                    <div 
+                                        *ngIf="c.total"
+                                        class="progress-wrap"
+                                        (click)="completeProgress(raid.id, char.id)"
+                                        role="button"
+                                        tabindex="0"
+                                    >
+                                        <p-progressBar
+                                            [value]="getPercent(c.done, c.total)"
+                                            [showValue]="false"
+                                            styleClass="check-progress"
+                                        ></p-progressBar>
+                                        <span class="progress-label">{{ c.done }}/{{ c.total }}</span>
+                                    </div>
+                                </ng-container>
                             </ng-container>
                         </td>
                     </tr>
